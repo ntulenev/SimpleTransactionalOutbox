@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30524.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Infracructure\Domain\Domain.csproj", "{D2DFCD1B-2976-49E2-9177-1B8C82C26E00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Infracructure\Infracructure.csproj", "{D2DFCD1B-2976-49E2-9177-1B8C82C26E00}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infracructure", "Infracructure", "{8307F0A6-DA7F-4BE4-B046-8B5FAAB2B5ED}"
 EndProject

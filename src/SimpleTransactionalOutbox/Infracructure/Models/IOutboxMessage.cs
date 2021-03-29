@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infracructure.Domain.Models
+namespace Infracructure.Models
 {
     public interface IOutboxMessage
     {

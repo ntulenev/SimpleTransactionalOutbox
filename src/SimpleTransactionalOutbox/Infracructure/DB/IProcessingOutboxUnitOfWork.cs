@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-using Infracructure.Domain.Models;
+using Infracructure.Models;
 
-namespace Infracructure.Domain.DB
+namespace Infracructure.DB
 {
     public interface IProcessingOutboxUnitOfWork : IUnitOfWork
     {
