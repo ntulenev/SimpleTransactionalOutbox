@@ -1,4 +1,4 @@
-﻿namespace Abstractions.DB
+﻿namespace Infracructure.Domain.DB
 {
     public interface IUnitOfWorkFactory<TUnitOfWork>
         where TUnitOfWork : IUnitOfWork

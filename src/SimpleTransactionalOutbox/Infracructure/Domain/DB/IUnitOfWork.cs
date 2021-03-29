@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Abstractions.DB
+namespace Infracructure.Domain.DB
 {
     public interface IUnitOfWork
     {

@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using Abstractions.Models;
+using Infracructure.Domain.Models;
 
-namespace Abstractions.Service
+namespace Infracructure.Domain.DB
 {
-    public interface IDataProcessor
+    interface IProcessingDataUnitOfWork : IUnitOfWork
     {
         Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default);
     }

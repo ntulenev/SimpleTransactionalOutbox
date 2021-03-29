@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using Abstractions.Models;
+using Infracructure.Domain.Models;
 
-namespace Abstractions.Service
+namespace Infracructure.Domain.Service
 {
     public interface IOutboxProcessor
     {

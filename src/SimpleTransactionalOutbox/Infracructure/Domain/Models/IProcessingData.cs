@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abstractions.Models
+namespace Infracructure.Domain.Models
 {
-    public interface IOutboxMessage
+    public interface IProcessingData
     {
     }
 }
