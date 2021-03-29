@@ -1,0 +1,2 @@
+# SimpleTransactionalOutbox
+Simple Transactional Outbox implementation
