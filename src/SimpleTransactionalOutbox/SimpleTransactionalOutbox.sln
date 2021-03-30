@@ -3,26 +3,35 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30524.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Infracructure\Infracructure.csproj", "{D2DFCD1B-2976-49E2-9177-1B8C82C26E00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infracructure", "Infracructure\Infracructure.csproj", "{0D236877-AC26-428C-B084-1EF6600E8BE5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infracructure", "Infracructure", "{8307F0A6-DA7F-4BE4-B046-8B5FAAB2B5ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB", "DB\DB.csproj", "{7110F9AA-D250-46FC-8357-DE993042035E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D2DFCD1B-2976-49E2-9177-1B8C82C26E00}.Debug|x64.ActiveCfg = Debug|x64
-		{D2DFCD1B-2976-49E2-9177-1B8C82C26E00}.Debug|x64.Build.0 = Debug|x64
-		{D2DFCD1B-2976-49E2-9177-1B8C82C26E00}.Release|x64.ActiveCfg = Release|x64
-		{D2DFCD1B-2976-49E2-9177-1B8C82C26E00}.Release|x64.Build.0 = Release|x64
+		{0D236877-AC26-428C-B084-1EF6600E8BE5}.Debug|x64.ActiveCfg = Debug|x64
+		{0D236877-AC26-428C-B084-1EF6600E8BE5}.Debug|x64.ActiveCfg = Debug|x64
+		{0D236877-AC26-428C-B084-1EF6600E8BE5}.Debug|x64.Build.0 = Debug|x64
+		{0D236877-AC26-428C-B084-1EF6600E8BE5}.Release|x64.ActiveCfg = Release|x64
+		{0D236877-AC26-428C-B084-1EF6600E8BE5}.Release|x64.ActiveCfg = Release|x64
+		{0D236877-AC26-428C-B084-1EF6600E8BE5}.Release|x64.Build.0 = Release|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Debug|x64.ActiveCfg = Debug|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Debug|x64.Build.0 = Debug|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Debug|x64.ActiveCfg = Debug|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Debug|x64.Build.0 = Debug|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Release|x64.ActiveCfg = Release|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Release|x64.Build.0 = Release|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Release|x64.ActiveCfg = Release|x64
+		{7110F9AA-D250-46FC-8357-DE993042035E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{D2DFCD1B-2976-49E2-9177-1B8C82C26E00} = {8307F0A6-DA7F-4BE4-B046-8B5FAAB2B5ED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8E7DA224-9781-4BEF-BDD0-BBFE96D24DDD}
