@@ -11,25 +11,27 @@ using Abstractions.DB;
 
 namespace DB
 {
-    public abstract class UnitOfWork<TContext> : 
-        IUnitOfWork, 
-        IDisposable, 
+    public abstract class UnitOfWork<TContext> :
+        IUnitOfWork,
+        IDisposable,
         IAsyncDisposable
         where TContext : DbContext
     {
 
         public UnitOfWork(
             TContext context,
-            IsolationLevel isolationLevel,
+            IsolationLevel? isolationLevel,
             ILogger<UnitOfWork<TContext>> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            _transaction =
-                context.Database
-                    .BeginTransaction(isolationLevel);
-
+            if (isolationLevel is not null)
+            {
+                _transaction =
+                    context.Database
+                        .BeginTransaction(isolationLevel.Value);
+            }
             _logger.LogInformation("UOF with transaction created.");
         }
 
@@ -83,10 +85,13 @@ namespace DB
 
                 _logger.LogInformation("Changes has been saved.");
 
-                await _transaction.CommitAsync(cancellationToken)
-                    .ConfigureAwait(false);
+                if (_transaction is not null)
+                {
+                    await _transaction.CommitAsync(cancellationToken)
+                                      .ConfigureAwait(false);
 
-                _logger.LogInformation("Transaction committed successfully.");
+                    _logger.LogInformation("Transaction committed successfully.");
+                }
             }
             catch (Exception ex)
             {
@@ -107,7 +112,10 @@ namespace DB
         {
             if (disposing)
             {
-                _transaction?.Dispose();
+                if (_transaction is not null)
+                {
+                    _transaction?.Dispose();
+                }
             }
 
             _transaction = null!;
@@ -118,7 +126,7 @@ namespace DB
             if (_transaction is not null)
             {
                 await _transaction.DisposeAsync()
-                    .ConfigureAwait(false);
+                                  .ConfigureAwait(false);
             }
 
             _transaction = null!;
@@ -126,7 +134,7 @@ namespace DB
 
         private readonly ILogger _logger;
         protected readonly TContext _context;
-        private IDbContextTransaction _transaction;
+        private IDbContextTransaction? _transaction;
         private bool _isDisposed;
     }
 }
