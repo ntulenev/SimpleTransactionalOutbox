@@ -8,5 +8,8 @@ namespace Infracructure.Models
 {
     public interface IProcessingData
     {
+        public long Id { get; }
+
+        public int Value { get; }
     }
 }
