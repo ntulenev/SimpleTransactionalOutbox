@@ -5,7 +5,7 @@ using Infracructure.Models;
 
 namespace Infracructure.DB
 {
-    interface IProcessingDataUnitOfWork : IUnitOfWork
+    public interface IProcessingDataUnitOfWork : IUnitOfWork
     {
         Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default);
     }
