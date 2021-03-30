@@ -6,7 +6,7 @@ using Abstractions.Models;
 
 namespace Abstractions.DB
 {
-    public interface IOutboxFetcherUnitOfWork
+    public interface IOutboxFetcher
     {
         Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default);
     }

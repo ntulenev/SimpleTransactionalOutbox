@@ -20,12 +20,7 @@ namespace DB
              ISerializer<IProcessingData> serializer)
             : base(context, System.Data.IsolationLevel.Serializable, logger)
         {
-            if (serializer is null)
-            {
-                throw new ArgumentNullException(nameof(serializer));
-            }
-
-            _serializer = serializer;
+            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
         public async Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default)

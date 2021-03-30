@@ -10,15 +10,15 @@ using Abstractions.Models;
 
 namespace DB
 {
-    public class OutboxFetcherUnitOfWork : UnitOfWork<OutboxContext>, IOutboxFetcherUnitOfWork
+    public class OutboxFetcher : IOutboxFetcher
     {
 
-        public OutboxFetcherUnitOfWork(
+        public OutboxFetcher(
             OutboxContext context,
-            ILogger<OutboxFetcherUnitOfWork> logger)
-           : base(context, isolationLevel: null, logger)
+            ILogger<OutboxFetcher> logger)
         {
-
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default)
@@ -26,5 +26,9 @@ namespace DB
             await Task.Yield();
             throw new NotImplementedException();
         }
+
+        private readonly OutboxContext _context;
+        private readonly ILogger<OutboxFetcher> _logger;
+
     }
 }
