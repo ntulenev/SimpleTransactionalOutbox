@@ -8,8 +8,6 @@ namespace Abstractions.DB
 {
     public interface IProcessingOutboxUnitOfWork : IUnitOfWork
     {
-        Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default);
-
         Task RemoveOutboxMessageAsync(IOutboxMessage message, CancellationToken cancellationToken = default);
     }
 }
