@@ -16,7 +16,7 @@ namespace DB
     {
         public ProcessingDataUnitOfWork(
              OutboxContext context,
-             ILogger<UnitOfWork<OutboxContext>> logger,
+             ILogger<ProcessingDataUnitOfWork> logger,
              ISerializer<IProcessingData> serializer)
             : base(context, System.Data.IsolationLevel.Serializable, logger)
         {
@@ -35,7 +35,7 @@ namespace DB
                 throw new ArgumentNullException(nameof(data));
             }
 
-            var item = await _context.ProcessingData.SingleOrDefaultAsync(x => x.Id == data.Id).ConfigureAwait(false);
+            var item = await _context.ProcessingData.SingleOrDefaultAsync(x => x.Id == data.Id, cancellationToken).ConfigureAwait(false);
 
             if (item is not null)
             {
