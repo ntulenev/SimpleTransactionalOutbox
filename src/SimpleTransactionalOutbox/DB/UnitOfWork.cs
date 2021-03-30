@@ -11,7 +11,10 @@ using Infracructure.DB;
 
 namespace DB
 {
-    public abstract class UnitOfWork<TContext> : IUnitOfWork, IDisposable, IAsyncDisposable
+    public abstract class UnitOfWork<TContext> : 
+        IUnitOfWork, 
+        IDisposable, 
+        IAsyncDisposable
         where TContext : DbContext
     {
 
@@ -40,7 +43,7 @@ namespace DB
             Dispose(true);
             _isDisposed = true;
 
-            _logger.LogInformation("Instance disposed");
+            _logger.LogInformation("Instance disposed.");
 
             GC.SuppressFinalize(this);
         }
@@ -63,11 +66,31 @@ namespace DB
             GC.SuppressFinalize(this);
         }
 
-        public Task SaveAsync(CancellationToken cancellationToken = default)
+        public async Task SaveAsync(CancellationToken cancellationToken = default)
         {
             ThrowIfDisposed();
 
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using var loggingScope = _logger.BeginScope("Starting save changes.");
+
+            try
+            {
+                _ = await _context.SaveChangesAsync(cancellationToken)
+                    .ConfigureAwait(false);
+
+                _logger.LogInformation("Changes has been saved.");
+
+                await _transaction.CommitAsync(cancellationToken)
+                    .ConfigureAwait(false);
+
+                _logger.LogInformation("Transaction committed successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error on saving data in database.");
+                throw;
+            }
         }
 
         protected void ThrowIfDisposed()
@@ -100,8 +123,8 @@ namespace DB
         }
 
         private readonly ILogger _logger;
+        protected readonly TContext _context;
         private IDbContextTransaction _transaction;
-        private readonly TContext _context;
         private bool _isDisposed;
     }
 }
