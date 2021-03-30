@@ -63,7 +63,9 @@ namespace DB
 
             _logger.LogInformation("Instance disposed");
 
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
             GC.SuppressFinalize(this);
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         }
 
         public async Task SaveAsync(CancellationToken cancellationToken = default)
