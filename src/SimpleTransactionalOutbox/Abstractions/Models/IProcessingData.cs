@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infracructure.Models
+namespace Abstractions.Models
 {
     public interface IProcessingData
     {

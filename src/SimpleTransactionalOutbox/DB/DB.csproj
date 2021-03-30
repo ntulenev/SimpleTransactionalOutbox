@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Infracructure\Infracructure.csproj" />
+    <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
   </ItemGroup>
   
 

@@ -1,5 +1,5 @@
-﻿using Infracructure.DB;
-using Infracructure.Models;
+﻿using Abstractions.DB;
+using Abstractions.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Microsoft.Extensions.Logging;
 
-using Infracructure.Serialization;
+using Abstractions.Serialization;
 
 namespace DB
 {
@@ -36,6 +36,7 @@ namespace DB
             }
 
             var item = await _context.ProcessingData.SingleOrDefaultAsync(x => x.Id == data.Id).ConfigureAwait(false);
+
             if (item is not null)
             {
                 item.Value = data.Value;

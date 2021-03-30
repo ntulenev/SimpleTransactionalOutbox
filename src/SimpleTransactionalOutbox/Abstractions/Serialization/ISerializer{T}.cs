@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infracructure.Models
+namespace Abstractions.Serialization
 {
-    public interface IOutboxMessage
+    public interface ISerializer<T>
     {
+        public string Serialize(T obj);
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using Infracructure.Models;
+using Abstractions.Models;
 
-namespace Infracructure.Bus
+namespace Abstractions.Bus
 {
     public interface IOutboxSender
     {

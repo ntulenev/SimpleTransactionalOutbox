@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
-using Infracructure.DB;
+using Abstractions.DB;
 
 namespace DB
 {

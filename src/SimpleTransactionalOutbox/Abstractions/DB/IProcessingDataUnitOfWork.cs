@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using Infracructure.Models;
+using Abstractions.Models;
 
-namespace Infracructure.DB
+namespace Abstractions.DB
 {
     public interface IProcessingDataUnitOfWork : IUnitOfWork
     {
