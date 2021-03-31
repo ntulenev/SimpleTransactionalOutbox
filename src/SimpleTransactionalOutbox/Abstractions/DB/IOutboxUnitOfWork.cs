@@ -6,7 +6,7 @@ using Abstractions.Models;
 
 namespace Abstractions.DB
 {
-    public interface IProcessingOutboxUnitOfWork : IUnitOfWork
+    public interface IOutboxUnitOfWork : IUnitOfWork
     {
         Task RemoveOutboxMessageAsync(IOutboxMessage message, CancellationToken cancellationToken = default);
     }
