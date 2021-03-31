@@ -30,14 +30,20 @@ namespace DB
                 throw new ArgumentNullException(nameof(data));
             }
 
+            _logger.LogInformation("Starting process {@data}.", data);
+
             var item = await _context.ProcessingData.SingleOrDefaultAsync(x => x.Id == data.Id, cancellationToken).ConfigureAwait(false);
 
             if (item is not null)
             {
+                _logger.LogInformation("Updating exists data from {oldValue} => {newValue}.", item.Value, data.Value);
+
                 item.Value = data.Value;
             }
             else
             {
+                _logger.LogInformation("Creating new data item.");
+
                 _context.ProcessingData.Add(new ProcessingData
                 {
                     Id = data.Id,
