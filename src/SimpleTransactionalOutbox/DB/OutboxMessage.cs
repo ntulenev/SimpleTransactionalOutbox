@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Abstractions.Models;
+
 namespace DB
 {
     public class OutboxMessage

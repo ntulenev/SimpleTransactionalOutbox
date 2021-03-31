@@ -1,4 +1,4 @@
-﻿namespace DB
+﻿namespace Abstractions.Models
 {
     public enum OutboxMessageType
     {
