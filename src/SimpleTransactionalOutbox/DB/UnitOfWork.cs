@@ -132,7 +132,7 @@ namespace DB
             _transaction = null!;
         }
 
-        private readonly ILogger _logger;
+        protected readonly ILogger _logger;
         protected readonly TContext _context;
         private IDbContextTransaction? _transaction;
         private bool _isDisposed;
