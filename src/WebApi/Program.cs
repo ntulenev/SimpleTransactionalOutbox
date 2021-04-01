@@ -3,7 +3,6 @@ using Microsoft.Extensions.Hosting;
 
 using Serilog;
 
-
 namespace WebApi
 {
     public class Program
