@@ -38,7 +38,10 @@ namespace Logic
                 await _sender.SendAsync(message, cancellationToken).ConfigureAwait(false);
 
                 _logger.LogInformation("Start removing outbox message.");
+
                 await _uow.RemoveOutboxMessageAsync(message, cancellationToken).ConfigureAwait(false);
+
+                await _uow.SaveAsync(cancellationToken).ConfigureAwait(false);
 
                 return true;
             }
