@@ -13,10 +13,8 @@ namespace DB
         public OutboxContext(DbContextOptions<OutboxContext> contextOptions)
            : base(contextOptions)
         {
+            Database.EnsureCreated();
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-            optionsBuilder.UseSnakeCaseNamingConvention();
 
         protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)
         {
