@@ -34,6 +34,8 @@ namespace Logic
 
             await _uow.ProcessDataAsync(data, cancellationToken).ConfigureAwait(false);
 
+            await _uow.SaveAsync(cancellationToken).ConfigureAwait(false);
+
             _logger.LogInformation("End processing.");
         }
 
