@@ -6,7 +6,7 @@ using Abstractions.Serialization;
 
 namespace Serialization
 {
-    class JsonDeserializer<T> : IDeserializer<T>
+    public class JsonDeserializer<T> : IDeserializer<T>
     {
         public T Deserialize(string obj)
         {
