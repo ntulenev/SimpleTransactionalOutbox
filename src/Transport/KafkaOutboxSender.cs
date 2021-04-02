@@ -14,7 +14,7 @@ using AS = Abstractions.Serialization;
 
 namespace Transport
 {
-    class KafkaOutboxSender : IOutboxSender
+    public class KafkaOutboxSender : IOutboxSender
     {
         public KafkaOutboxSender(IProducer<Null, string> producer,
                                  AS.ISerializer<IOutboxMessage> serializer,

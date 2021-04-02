@@ -11,7 +11,7 @@ using Abstractions.Service;
 
 namespace Logic
 {
-    class OutboxMessageProcessor : IOutboxMessageProcessor
+    public class OutboxMessageProcessor : IOutboxMessageProcessor
     {
         public OutboxMessageProcessor(IOutboxUnitOfWork uow,
                                       IOutboxSender sender,

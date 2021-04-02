@@ -22,13 +22,13 @@ namespace WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IDataProcessor, DataProcessor>();
-            services.AddTransient<IProcessingDataUnitOfWork, ProcessingDataUnitOfWork>();
+            services.AddScoped<IDataProcessor, DataProcessor>();
+            services.AddScoped<IProcessingDataUnitOfWork, ProcessingDataUnitOfWork>();
+
             services.AddSingleton(typeof(IDeserializer<>), typeof(JsonDeserializer<>));
             services.AddSingleton(typeof(ISerializer<>), typeof(JsonSerializer<>));
-            services.AddDbContext<OutboxContext>(options => options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
-            
-            services.AddDbContext<OutboxContext>();
+
+            services.AddDbContext<OutboxContext>(options => options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));    
 
             services.AddControllers();
             services.AddHealthChecks();
