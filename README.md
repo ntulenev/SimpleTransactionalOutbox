@@ -20,5 +20,10 @@ Incoming http POST message
 
 Kafka stream message
 ```
-{"MessageId":"e433fa40-9a18-4bb3-b820-6f027e7f585d","OccurredOn":"2021-04-02T18:51:32.070031","MessageType":0,"Body":"{\"Id\":1,\"Value\":42}"}
+{
+   "MessageId":"e433fa40-9a18-4bb3-b820-6f027e7f585d",
+   "OccurredOn":"2021-04-02T18:51:32.070031",
+   "MessageType":0,
+   "Body":"{\"Id\":1,\"Value\":42}"
+}
 ```
