@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Abstractions.Service;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,13 +15,13 @@ namespace OutboxService.Services
     public class OutboxHostedService : IHostedService
     {
         public OutboxHostedService(ILogger<OutboxHostedService> logger,
-                             IOutbox outbox,
                              IHostApplicationLifetime hostApplicationLifetime,
-                             IOptions<OutboxHostedServiceOptions> options)
+                             IOptions<OutboxHostedServiceOptions> options,
+                             IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _outbox = outbox ?? throw new ArgumentNullException(nameof(outbox));
             _hostApplicationLifetime = hostApplicationLifetime ?? throw new ArgumentNullException(nameof(hostApplicationLifetime));
+            _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
             if (options is null)
             {
@@ -41,7 +42,12 @@ namespace OutboxService.Services
             {
                 while (!_hostApplicationLifetime.ApplicationStopping.IsCancellationRequested)
                 {
-                    await _outbox.RunProcessingAsync(_hostApplicationLifetime.ApplicationStopping).ConfigureAwait(false);
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    {
+                        var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
+                        await outbox.RunProcessingAsync(_hostApplicationLifetime.ApplicationStopping).ConfigureAwait(false);
+                    }
+
                     await Task.Delay(_delay).ConfigureAwait(false);
                 }
             }, _hostApplicationLifetime.ApplicationStopping);
@@ -79,7 +85,7 @@ namespace OutboxService.Services
 
         private readonly TimeSpan _delay;
         private readonly ILogger<OutboxHostedService> _logger;
-        private readonly IOutbox _outbox;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
     }
 }

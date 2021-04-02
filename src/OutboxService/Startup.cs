@@ -16,6 +16,7 @@ using Serialization;
 using Transport;
 
 using AS = Abstractions.Serialization;
+using OutboxService.Services;
 
 namespace OutboxService
 {
@@ -30,9 +31,10 @@ namespace OutboxService
         {
             services.AddDbContext<OutboxContext>(options => options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddSingleton<IOutbox, Outbox>();
+            services.AddScoped<IOutbox, Outbox>();
+            services.AddScoped<IOutboxFetcher, OutboxFetcher>();
+
             services.AddSingleton<IOutboxSender, KafkaOutboxSender>();
-            services.AddSingleton<IOutboxUnitOfWork, OutboxUnitOfWork>();
             services.AddSingleton(typeof(AS.ISerializer<>), typeof(JsonSerializer<>));
 
             services.AddSingleton(p =>
@@ -49,6 +51,7 @@ namespace OutboxService
             services.Configure<KafkaOutboxSenderOptions>(_configuration.GetSection(nameof(KafkaOutboxSenderOptions)));
             services.Configure<KafkaProducerOptions>(_configuration.GetSection(nameof(KafkaProducerOptions)));
 
+            services.AddHostedService<OutboxHostedService>();
             services.AddHealthChecks();
         }
 
