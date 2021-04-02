@@ -32,7 +32,7 @@ namespace OutboxService.Services
                 throw new ArgumentException(nameof(options));
             }
 
-            _delay = options.Value.DelayInSeconds;
+            _delay = TimeSpan.FromSeconds(options.Value.DelayInSeconds);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -77,7 +77,7 @@ namespace OutboxService.Services
 
         private Task? _outboxTask;
 
-        private readonly int _delay;
+        private readonly TimeSpan _delay;
         private readonly ILogger<OutboxHostedService> _logger;
         private readonly IOutbox _outbox;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;

@@ -1,16 +1,21 @@
-using Abstractions.Bus;
-using Abstractions.DB;
-using Abstractions.Serialization;
-using Abstractions.Service;
-using DB;
-using Logic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
+using Abstractions.Bus;
+using Abstractions.DB;
+using Abstractions.Service;
+using Confluent.Kafka;
+using DB;
+using Logic;
+using OutboxService.Config;
 using Serialization;
 using Transport;
+
+using AS = Abstractions.Serialization;
 
 namespace OutboxService
 {
@@ -28,14 +33,21 @@ namespace OutboxService
             services.AddSingleton<IOutbox, Outbox>();
             services.AddSingleton<IOutboxSender, KafkaOutboxSender>();
             services.AddSingleton<IOutboxUnitOfWork, OutboxUnitOfWork>();
-            services.AddSingleton(typeof(ISerializer<>), typeof(JsonSerializer<>));
+            services.AddSingleton(typeof(AS.ISerializer<>), typeof(JsonSerializer<>));
+
+            services.AddSingleton(p =>
+            {
+                var options = p.GetRequiredService<IOptions<KafkaProducerOptions>>();
+                var config = new ProducerConfig { BootstrapServers = string.Join(",", options.Value.BootstrapServers!) };
+                return new ProducerBuilder<Null, string>(config).Build();
+            });
 
             services.AddScoped<IOutboxMessageProcessor, OutboxMessageProcessor>();
             services.AddScoped<IOutboxUnitOfWork, OutboxUnitOfWork>();
 
-            //TODO Kafka Producer
-            //TODO KafkaOutboxSenderOptions
-            //TODO OutboxHostedServiceOptions
+            services.Configure<OutboxHostedServiceOptions>(_configuration.GetSection(nameof(OutboxHostedServiceOptions)));
+            services.Configure<KafkaOutboxSenderOptions>(_configuration.GetSection(nameof(KafkaOutboxSenderOptions)));
+            services.Configure<KafkaProducerOptions>(_configuration.GetSection(nameof(KafkaProducerOptions)));
 
             services.AddHealthChecks();
         }
