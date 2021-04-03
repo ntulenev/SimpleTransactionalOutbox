@@ -5,15 +5,23 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.Extensions.Logging;
 
 using Abstractions.Serialization;
 
 namespace DB
 {
+    /// <summary>
+    /// Unit of work for ProcessingData logic.
+    /// </summary>
     public class ProcessingDataUnitOfWork : UnitOfWork<OutboxContext>, IProcessingDataUnitOfWork
     {
+        /// <summary>
+        /// Creates <see cref="ProcessingDataUnitOfWork"/>.
+        /// </summary>
+        /// <param name="context">Databaes contex.</param>
+        /// <param name="logger">Logger.</param>
+        /// <param name="serializer">Serializer.</param>
         public ProcessingDataUnitOfWork(
              OutboxContext context,
              ILogger<ProcessingDataUnitOfWork> logger,
@@ -23,6 +31,7 @@ namespace DB
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
+        /// <inheritdoc/>
         public async Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default)
         {
             if (data is null)
