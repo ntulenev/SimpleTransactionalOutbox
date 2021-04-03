@@ -17,6 +17,7 @@ using Transport;
 
 using AS = Abstractions.Serialization;
 using OutboxService.Services;
+using OutboxService.Validations;
 
 namespace OutboxService
 {
@@ -43,6 +44,9 @@ namespace OutboxService
                 var config = new ProducerConfig { BootstrapServers = string.Join(",", options.Value.BootstrapServers!) };
                 return new ProducerBuilder<Null, string>(config).Build();
             });
+
+            services.AddSingleton<IValidateOptions<OutboxHostedServiceOptions>, OutboxHostedServiceOptionsValidator>();
+
 
             services.AddScoped<IOutboxMessageProcessor, OutboxMessageProcessor>();
             services.AddScoped<IOutboxUnitOfWork, OutboxUnitOfWork>();
