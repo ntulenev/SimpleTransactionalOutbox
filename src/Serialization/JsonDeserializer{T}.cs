@@ -6,8 +6,13 @@ using Abstractions.Serialization;
 
 namespace Serialization
 {
+    /// <summary>
+    /// Json deserializer.
+    /// </summary>
+    /// <typeparam name="T">Type of model for deserialization.</typeparam>
     public class JsonDeserializer<T> : IDeserializer<T>
     {
+        /// <inheritdoc/>
         public T Deserialize(string obj)
         {
             if (obj is null)
