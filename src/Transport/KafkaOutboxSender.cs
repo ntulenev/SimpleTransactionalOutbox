@@ -14,8 +14,18 @@ using AS = Abstractions.Serialization;
 
 namespace Transport
 {
+    /// <summary>
+    /// Outbox sender with transport based on Kafka.
+    /// </summary>
     public class KafkaOutboxSender : IOutboxSender
     {
+        /// <summary>
+        /// Creates <see cref="KafkaOutboxSender"/>.
+        /// </summary>
+        /// <param name="producer">Kafka producer.</param>
+        /// <param name="serializer">Message serializer.</param>
+        /// <param name="options">Sender configuration.</param>
+        /// <param name="logger">Logger.</param>
         public KafkaOutboxSender(IProducer<Null, string> producer,
                                  AS.ISerializer<IOutboxMessage> serializer,
                                  IOptions<KafkaOutboxSenderOptions> options,
@@ -39,6 +49,7 @@ namespace Transport
             _topicName = options.Value.TopicName;
         }
 
+        /// <inheritdoc/>
         public async Task SendAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
         {
             if (message is null)

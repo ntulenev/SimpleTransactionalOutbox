@@ -5,8 +5,14 @@ using Microsoft.Extensions.Options;
 
 namespace Transport.Validation
 {
+    /// <summary>
+    /// Validator for <see cref="KafkaOutboxSenderOptions"/>.
+    /// </summary>
     public class KafkaOutboxSenderOptionsValidation : IValidateOptions<KafkaOutboxSenderOptions>
     {
+        /// <summary>
+        /// Validates configuration.
+        /// </summary>
         public ValidateOptionsResult Validate(string name, KafkaOutboxSenderOptions options)
         {
             if (options is null)
