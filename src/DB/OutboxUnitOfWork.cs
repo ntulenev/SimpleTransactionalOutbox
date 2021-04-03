@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.Extensions.Logging;
 
 using Abstractions.DB;
@@ -11,8 +10,16 @@ using Abstractions.Models;
 
 namespace DB
 {
+    /// <summary>
+    /// Unit of work for outbox logic.
+    /// </summary>
     public class OutboxUnitOfWork : UnitOfWork<OutboxContext>, IOutboxUnitOfWork
     {
+        /// <summary>
+        /// Creates <see cref="OutboxUnitOfWork"/>.
+        /// </summary>
+        /// <param name="context">Database context.</param>
+        /// <param name="logger">Logger.</param>
         public OutboxUnitOfWork(
             OutboxContext context,
             ILogger<ProcessingDataUnitOfWork> logger)
@@ -20,6 +27,7 @@ namespace DB
         {
         }
 
+        /// <inheritdoc/>
         public async Task RemoveOutboxMessageAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
         {
 
