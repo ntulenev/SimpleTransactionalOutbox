@@ -2,24 +2,32 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Microsoft.EntityFrameworkCore;
 
 using Abstractions.DB;
 using Abstractions.Models;
-using System.Linq;
+
 
 namespace DB
 {
+    /// <summary>
+    /// Class that pools Outbox messages for processing.
+    /// </summary>
     public class OutboxFetcher : IOutboxFetcher
     {
-
+        /// <summary>
+        /// Creates <see cref="OutboxFetcher"/>.
+        /// </summary>
+        /// <param name="context">Database context.</param>
         public OutboxFetcher(
             OutboxContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        /// <inheritdoc/>
         public async Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default)
         {
             return await _context.OutboxMessages
