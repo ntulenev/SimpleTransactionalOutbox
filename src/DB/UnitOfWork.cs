@@ -11,13 +11,22 @@ using Abstractions.DB;
 
 namespace DB
 {
+    /// <summary>
+    /// Base UnitOfWork class.
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
     public abstract class UnitOfWork<TContext> :
         IUnitOfWork,
         IDisposable,
         IAsyncDisposable
         where TContext : DbContext
     {
-
+        /// <summary>
+        /// Creates <see cref="UnitOfWork{TContext}"/>.
+        /// </summary>
+        /// <param name="context">Database context.</param>
+        /// <param name="isolationLevel">Transaction isolation level.</param>
+        /// <param name="logger">Logger.</param>
         public UnitOfWork(
             TContext context,
             IsolationLevel? isolationLevel,
@@ -35,6 +44,9 @@ namespace DB
             _logger.LogInformation("UOF with transaction created.");
         }
 
+        /// <summary>
+        /// Disposes unit of work.
+        /// </summary>
         public void Dispose()
         {
             if (_isDisposed)
@@ -50,6 +62,9 @@ namespace DB
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Disposes unit of work is async way.
+        /// </summary>
         public async ValueTask DisposeAsync()
         {
             if (_isDisposed)
@@ -70,6 +85,7 @@ namespace DB
 #pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         }
 
+        /// <inheritdoc/>
         public async Task SaveAsync(CancellationToken cancellationToken = default)
         {
             ThrowIfDisposed();
