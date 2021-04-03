@@ -13,10 +13,20 @@ using Models;
 
 namespace WebApi.Controllers
 {
+    /// <summary>
+    /// Api controller for incomming data messages.
+    /// </summary>
     [ApiController]
     [Route("")]
     public class ProcessDataController : ControllerBase
     {
+        /// <summary>
+        /// Creates <see cref="ProcessDataController"/>.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="service">Processing service.</param>
+        /// <param name="deserializer">Message deserializer.</param>
+        /// <param name="lifetime">App lifetime parameter.</param>
         public ProcessDataController(
            ILogger<ProcessDataController> logger,
            IDataProcessor service,

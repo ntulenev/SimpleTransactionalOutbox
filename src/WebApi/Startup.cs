@@ -10,7 +10,6 @@ using Abstractions.Service;
 using DB;
 using Logic;
 using Serialization;
-using Microsoft.Extensions.Options;
 
 namespace WebApi
 {
