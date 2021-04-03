@@ -4,12 +4,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DB
 {
+    /// <summary>
+    /// Database context.
+    /// </summary>
     public class OutboxContext : DbContext
     {
+        /// <summary>
+        /// Outbox messages table.
+        /// </summary>
         public virtual DbSet<OutboxMessage> OutboxMessages { get; set; } = default!;
 
+        /// <summary>
+        /// Processing data table.
+        /// </summary>
         public virtual DbSet<ProcessingData> ProcessingData { get; set; } = default!;
 
+        /// <summary>
+        /// Creates <see cref="OutboxContext"/> instase.
+        /// </summary>
+        /// <param name="contextOptions">Options for context.</param>
         public OutboxContext(DbContextOptions<OutboxContext> contextOptions)
            : base(contextOptions)
         {
