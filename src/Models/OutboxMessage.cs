@@ -5,16 +5,30 @@ using Abstractions.Models;
 
 namespace Models
 {
+    /// <summary>
+    /// Outbox message model.
+    /// </summary>
     public class OutboxMessage : IOutboxMessage
     {
+        /// <inheritdoc/>
         public Guid MessageId { get; }
 
+        /// <inheritdoc/>
         public DateTime OccurredOn { get; }
 
+        /// <inheritdoc/>
         public OutboxMessageType MessageType { get; }
 
+        /// <inheritdoc/>
         public string Body { get; }
 
+        /// <summary>
+        /// Creates <see cref="OutboxMessage"/>.
+        /// </summary>
+        /// <param name="messageId">Message id.</param>
+        /// <param name="occurredOn">Created date/time.</param>
+        /// <param name="type">Message type.</param>
+        /// <param name="body">Message body.</param>
         public OutboxMessage(Guid messageId, DateTime occurredOn, OutboxMessageType type, string body)
         {
             if (body is null)
