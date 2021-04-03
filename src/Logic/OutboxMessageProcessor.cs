@@ -11,8 +11,17 @@ using Abstractions.Service;
 
 namespace Logic
 {
+    /// <summary>
+    /// Logic for single outbox message processing.
+    /// </summary>
     public class OutboxMessageProcessor : IOutboxMessageProcessor
     {
+        /// <summary>
+        /// Creates <see cref="OutboxMessageProcessor"/>.
+        /// </summary>
+        /// <param name="uow">Unit of work.</param>
+        /// <param name="sender">Data sender for external system.</param>
+        /// <param name="logger">Logger.</param>
         public OutboxMessageProcessor(IOutboxUnitOfWork uow,
                                       IOutboxSender sender,
                                       ILogger<OutboxMessageProcessor> logger
@@ -23,6 +32,7 @@ namespace Logic
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <inheritdoc/>
         public async Task<bool> TryProcessAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
         {
             if (message is null)

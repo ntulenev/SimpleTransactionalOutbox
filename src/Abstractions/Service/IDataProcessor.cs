@@ -6,7 +6,7 @@ using Abstractions.Models;
 namespace Abstractions.Service
 {
     /// <summary>
-    /// Processor for incommind data message.
+    /// Processor for incomming data message.
     /// </summary>
     public interface IDataProcessor
     {

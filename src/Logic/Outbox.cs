@@ -11,8 +11,17 @@ using Abstractions.Service;
 
 namespace Logic
 {
+    /// <summary>
+    /// Outbox processing logic.
+    /// </summary>
     public class Outbox : IOutbox
     {
+        /// <summary>
+        /// Creates <see cref="Outbox"/>.
+        /// </summary>
+        /// <param name="fetcher">DB data fetcher.</param>
+        /// <param name="scopedFactory">Factory for creating DI Scopes.</param>
+        /// <param name="logger">Logger.</param>
         public Outbox(IOutboxFetcher fetcher,
                       IServiceScopeFactory scopedFactory,
                       ILogger<Outbox> logger
@@ -23,7 +32,7 @@ namespace Logic
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-
+        /// <inheritdoc/>
         public async Task RunProcessingAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Run fetching messages from outbox.");

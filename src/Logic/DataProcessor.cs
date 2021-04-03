@@ -11,9 +11,17 @@ using Abstractions.Service;
 
 namespace Logic
 {
+    /// <summary>
+    /// Processor for incomming data message.
+    /// </summary>
     public class DataProcessor : IDataProcessor
     {
 
+        /// <summary>
+        /// Creates <see cref="DataProcessor"/>.
+        /// </summary>
+        /// <param name="uow">Unit of work.</param>
+        /// <param name="logger">Logger.</param>
         public DataProcessor(IProcessingDataUnitOfWork uow,
                              ILogger<DataProcessor> logger)
         {
@@ -21,6 +29,7 @@ namespace Logic
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        /// <inheritdoc/>
         public async Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default)
         {
             if (data is null)
