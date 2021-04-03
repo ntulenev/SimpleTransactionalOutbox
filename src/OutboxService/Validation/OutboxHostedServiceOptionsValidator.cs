@@ -5,8 +5,14 @@ using OutboxService.Config;
 
 namespace OutboxService.Validation
 {
+    /// <summary>
+    /// Validator for <see cref="OutboxHostedServiceOptions"/>.
+    /// </summary>
     public class OutboxHostedServiceOptionsValidator : IValidateOptions<OutboxHostedServiceOptions>
     {
+        /// <summary>
+        /// Validates configuration.
+        /// </summary>
         public ValidateOptionsResult Validate(string name, OutboxHostedServiceOptions options)
         {
             if (options is null)

@@ -3,17 +3,28 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Abstractions.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
+using Abstractions.Service;
 using OutboxService.Config;
 
 namespace OutboxService.Services
 {
+    /// <summary>
+    /// Outbox processing service.
+    /// </summary>
     public class OutboxHostedService : IHostedService
     {
+        /// <summary>
+        /// Creates <see cref="OutboxHostedService"/>.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        /// <param name="hostApplicationLifetime">Lifetime app param.</param>
+        /// <param name="options">Service configuration.</param>
+        /// <param name="serviceScopeFactory">Factory that creates DI Scopes.</param>
         public OutboxHostedService(ILogger<OutboxHostedService> logger,
                              IHostApplicationLifetime hostApplicationLifetime,
                              IOptions<OutboxHostedServiceOptions> options,
@@ -36,6 +47,9 @@ namespace OutboxService.Services
             _delay = TimeSpan.FromSeconds(options.Value.DelayInSeconds);
         }
 
+        /// <summary>
+        /// Starts service logic.
+        /// </summary>
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _outboxTask = Task.Run(async () =>
@@ -67,6 +81,9 @@ namespace OutboxService.Services
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Stops service logic.
+        /// </summary>
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             try

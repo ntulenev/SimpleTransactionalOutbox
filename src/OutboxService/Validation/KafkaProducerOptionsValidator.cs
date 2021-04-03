@@ -6,8 +6,14 @@ using OutboxService.Config;
 
 namespace OutboxService.Validation
 {
+    /// <summary>
+    /// Validator for <see cref="KafkaProducerOptions"/>.
+    /// </summary>
     public class KafkaProducerOptionsValidator : IValidateOptions<KafkaProducerOptions>
     {
+        /// <summary>
+        /// Validates configuration.
+        /// </summary>
         public ValidateOptionsResult Validate(string name, KafkaProducerOptions options)
         {
             if (options is null)
