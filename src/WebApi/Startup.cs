@@ -10,6 +10,7 @@ using Abstractions.Service;
 using DB;
 using Logic;
 using Serialization;
+using Microsoft.Extensions.Options;
 
 namespace WebApi
 {
@@ -27,7 +28,7 @@ namespace WebApi
 
             services.AddSingleton(typeof(IDeserializer<>), typeof(JsonDeserializer<>));
             services.AddSingleton(typeof(ISerializer<>), typeof(JsonSerializer<>));
-
+            
             services.AddDbContext<OutboxContext>(options => options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));    
 
             services.AddControllers();

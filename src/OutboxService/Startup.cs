@@ -14,10 +14,12 @@ using Logic;
 using OutboxService.Config;
 using Serialization;
 using Transport;
+using Transport.Validation;
+using OutboxService.Services;
+using OutboxService.Validation;
 
 using AS = Abstractions.Serialization;
-using OutboxService.Services;
-using OutboxService.Validations;
+
 
 namespace OutboxService
 {
@@ -47,6 +49,7 @@ namespace OutboxService
 
             services.AddSingleton<IValidateOptions<OutboxHostedServiceOptions>, OutboxHostedServiceOptionsValidator>();
             services.AddSingleton<IValidateOptions<KafkaProducerOptions>, KafkaProducerOptionsValidator>();
+            services.AddSingleton<IValidateOptions<KafkaOutboxSenderOptions>, KafkaOutboxSenderOptionsValidation>();
 
             services.AddScoped<IOutboxMessageProcessor, OutboxMessageProcessor>();
             services.AddScoped<IOutboxUnitOfWork, OutboxUnitOfWork>();
