@@ -46,7 +46,7 @@ namespace OutboxService
             });
 
             services.AddSingleton<IValidateOptions<OutboxHostedServiceOptions>, OutboxHostedServiceOptionsValidator>();
-
+            services.AddSingleton<IValidateOptions<KafkaProducerOptions>, KafkaProducerOptionsValidator>();
 
             services.AddScoped<IOutboxMessageProcessor, OutboxMessageProcessor>();
             services.AddScoped<IOutboxUnitOfWork, OutboxUnitOfWork>();
