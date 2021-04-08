@@ -13,7 +13,7 @@ namespace Serialization.Tests
 
             // Arrange
             var deserializer = new JsonDeserializer<TestClass>();
-            var testString = "{ \"test_value\" : \"test 123\", \"test_id\" : \"42\" }";
+            var testString = "{ \"test_value\" : \"test 123\", \"test_id\" : 42 }";
 
             // Act
             TestClass result = null!;
