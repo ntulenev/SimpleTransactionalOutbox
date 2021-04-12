@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Threading;
 
 using Xunit;
 
@@ -11,7 +12,7 @@ using Moq;
 
 using Abstractions.DB;
 using Abstractions.Models;
-using System.Threading;
+
 
 namespace Logic.Tests
 {
