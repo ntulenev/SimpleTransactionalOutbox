@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serialization", "Serializat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models.Tests", "Models.Tests\Models.Tests.csproj", "{704412C5-2357-4326-A742-0E19F792F7BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serialization.Tests", "Serialization.Tests\Serialization.Tests.csproj", "{30ADF068-AAFB-480E-9BC6-86C53BCA0179}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serialization.Tests", "Serialization.Tests\Serialization.Tests.csproj", "{30ADF068-AAFB-480E-9BC6-86C53BCA0179}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Tests", "Logic.Tests\Logic.Tests.csproj", "{2B4F4891-1A01-468A-A86A-9B84C73013BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,13 +88,19 @@ Global
 		{704412C5-2357-4326-A742-0E19F792F7BB}.Release|x64.ActiveCfg = Release|x64
 		{704412C5-2357-4326-A742-0E19F792F7BB}.Release|x64.Build.0 = Release|x64
 		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Debug|x64.ActiveCfg = Debug|x64
-		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Debug|x64.Build.0 = Debug|x64
 		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Debug|x64.ActiveCfg = Debug|x64
 		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Debug|x64.Build.0 = Debug|x64
 		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Release|x64.ActiveCfg = Release|x64
-		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Release|x64.Build.0 = Release|x64
 		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Release|x64.ActiveCfg = Release|x64
 		{30ADF068-AAFB-480E-9BC6-86C53BCA0179}.Release|x64.Build.0 = Release|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Debug|x64.ActiveCfg = Debug|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Debug|x64.Build.0 = Debug|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Debug|x64.ActiveCfg = Debug|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Debug|x64.Build.0 = Debug|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Release|x64.ActiveCfg = Release|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Release|x64.Build.0 = Release|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Release|x64.ActiveCfg = Release|x64
+		{2B4F4891-1A01-468A-A86A-9B84C73013BD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
