@@ -10,6 +10,9 @@ using Moq;
 
 using Abstractions.DB;
 using Abstractions.Bus;
+using System.Threading;
+using Abstractions.Models;
+using System.Threading.Tasks;
 
 namespace Logic.Tests
 {
@@ -81,6 +84,26 @@ namespace Logic.Tests
 
             // Assert
             exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "OutboxMessageProcessor cant process null message.")]
+        [Trait("Category", "Unit")]
+        public async Task CantProcessNullMessageAsync()
+        {
+
+            // Arrange
+            var uow = new Mock<IOutboxUnitOfWork>();
+            var sender = new Mock<IOutboxSender>();
+            var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
+            var processor = new OutboxMessageProcessor(uow.Object, sender.Object, ilogger.Object);
+            var cts = new CancellationTokenSource();
+            IOutboxMessage message = null!;
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => _ = await processor.TryProcessAsync(message, cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
     }
 }
