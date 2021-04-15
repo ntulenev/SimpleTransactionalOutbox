@@ -65,5 +65,21 @@ namespace Logic.Tests
 			// Assert
 			exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
 		}
+
+		[Fact(DisplayName = "Outbox can be created with valid params.")]
+		[Trait("Category", "Unit")]
+		public void CanCreate()
+		{
+			// Arrange
+			var fetcher = new Mock<IOutboxFetcher>();
+			var scopedFactory = new Mock<IServiceScopeFactory>();
+			var ilogger = new Mock<ILogger<Outbox>>();
+
+			// Act
+			var exception = Record.Exception(() => new Outbox(fetcher.Object, scopedFactory.Object, ilogger.Object));
+
+			// Assert
+			exception.Should().BeNull();
+		}
 	}
 }
