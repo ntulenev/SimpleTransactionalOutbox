@@ -61,7 +61,7 @@ namespace Transport
 
             try
             {
-                _logger.LogInformation("Sending data {strMessage}", strMessage);
+                _logger.LogInformation("Sending data {strMessage}.", strMessage);
 
                 var dr = await _producer.ProduceAsync(_topicName, new Message<Null, string>
                 {
@@ -71,7 +71,7 @@ namespace Transport
             }
             catch (ProduceException<Null, string> e)
             {
-                _logger.LogError(e, $"Delivery failed: {e.Error.Reason}");
+                _logger.LogError(e, $"Delivery failed: {e.Error.Reason}.");
                 throw;
             }
         }
