@@ -38,7 +38,7 @@ namespace Logic
             _logger.LogInformation("Run fetching messages from outbox.");
             var messages = await _fetcher.ReadOutboxMessagesAsync(cancellationToken);
 
-            _logger.LogInformation("Messages count {count}", messages.Count);
+            _logger.LogInformation("Messages count {count}.", messages.Count);
             foreach (var item in messages)
             {
                 using var scope = _scopedFactory.CreateScope();
