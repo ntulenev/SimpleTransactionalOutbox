@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Confluent.Kafka;
 
@@ -12,6 +13,8 @@ using Xunit;
 using Abstractions.Models;
 
 using FluentAssertions;
+using System.Threading;
+using Xunit.Sdk;
 
 namespace Transport.Tests
 {
@@ -126,5 +129,54 @@ namespace Transport.Tests
             exception.Should().BeNull();
         }
 
+        [Fact(DisplayName = "KafkaOutboxSender cant send null message.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSendNullMessageAsync()
+        {
+
+            // Arrange
+            var producer = new Mock<IProducer<Null, string>>();
+            var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
+            var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+            options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = "A" });
+            var logger = new Mock<ILogger<KafkaOutboxSender>>();
+            var sender = new KafkaOutboxSender(producer.Object, serializer.Object, options.Object, logger.Object);
+            var token = new CancellationTokenSource();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await sender.SendAsync(null!, token.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "KafkaOutboxSender can send valid message.")]
+        [Trait("Category", "Unit")]
+        public async Task CanSendValidMessageAsync()
+        {
+
+            // Arrange
+            var topicName = "A";
+            var producer = new Mock<IProducer<Null, string>>();
+            var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
+            var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+            options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = topicName });
+            var logger = new Mock<ILogger<KafkaOutboxSender>>();
+            var sender = new KafkaOutboxSender(producer.Object, serializer.Object, options.Object, logger.Object);
+            var token = new CancellationTokenSource();
+            var message = new Mock<IOutboxMessage>();
+
+            var jsonStr = "test";
+            serializer.Setup(x => x.Serialize(message.Object)).Returns(jsonStr);
+
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await sender.SendAsync(message.Object, token.Token));
+
+            // Assert
+            exception.Should().BeNull();
+            serializer.Verify(x => x.Serialize(message.Object), Times.Once);
+            producer.Verify(x => x.ProduceAsync(topicName, It.Is<Message<Null, string>>(x => x.Value == jsonStr), token.Token), Times.Once);
+        }
     }
 }
