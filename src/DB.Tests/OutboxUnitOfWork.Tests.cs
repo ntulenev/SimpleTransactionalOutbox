@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 using Xunit;
 
@@ -9,6 +12,9 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 
 using Moq;
+
+using Abstractions.Models;
+
 
 namespace DB.Tests
 {
@@ -80,7 +86,144 @@ namespace DB.Tests
             exception.Should().BeNull();
         }
 
+        [Fact(DisplayName = "OutboxUnitOfWork can't remove empty message.")]
+        [Trait("Category", "Unit")]
+        public async Task CantRemoveEmptyMessageAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+            var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(null!, CancellationToken.None));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "OutboxUnitOfWork can't work if disposed.")]
+        [Trait("Category", "Unit")]
+        public async Task CantWorkWithDisposedObjectAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+            var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+            outbox.Dispose();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(new TestMessage(), CancellationToken.None));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
+
+        [Fact(DisplayName = "OutboxUnitOfWork can't work if disposed async.")]
+        [Trait("Category", "Unit")]
+        public async Task CantWorkWithDisposedObjectAsync2()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+            var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+            await outbox.DisposeAsync();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(new TestMessage(), CancellationToken.None));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
+
+        [Fact(DisplayName = "OutboxUnitOfWork can remove message.")]
+        [Trait("Category", "Unit")]
+        public async Task CanRemoveMessageAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var msg1 = new OutboxMessage
+            {
+                Body = "test1",
+                MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
+                OccurredOn = DateTime.UtcNow
+            };
+            var msg2 = new OutboxMessage
+            {
+                Body = "test2",
+                MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
+                OccurredOn = DateTime.UtcNow.AddDays(1)
+            };
+            ctx.OutboxMessages.Add(msg1);
+            ctx.OutboxMessages.Add(msg2);
+            ctx.SaveChanges();
+            var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+            var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await outbox.RemoveOutboxMessageAsync(new TestMessage
+                {
+                    MessageId = msg1.MessageId
+                }, CancellationToken.None);
+                await outbox.SaveAsync(CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().BeNull();
+            ctx.OutboxMessages.Should().HaveCount(1);
+            ctx.OutboxMessages.Single().Should().Be(msg2);
+        }
+
+        [Fact(DisplayName = "OutboxUnitOfWork cant remove message without saving.")]
+        [Trait("Category", "Unit")]
+        public async Task CantRemoveMessageWithoutSavingAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var msg = new OutboxMessage
+            {
+                Body = "test",
+                MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
+                OccurredOn = DateTime.UtcNow
+            };
+            ctx.OutboxMessages.Add(msg);
+            ctx.SaveChanges();
+            var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+            var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await outbox.RemoveOutboxMessageAsync(new TestMessage
+                {
+                    MessageId = msg.MessageId
+                }, CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().BeNull();
+            ctx.OutboxMessages.Should().NotBeEmpty();
+        }
+
         private readonly OutboxContext _ctx;
         private SqliteConnection _conn;
+
+        private class TestMessage : IOutboxMessage
+        {
+            public Guid MessageId { get; set; }
+
+            public DateTime OccurredOn { get; set; }
+
+            public OutboxMessageType MessageType { get; set; }
+
+            public string Body { get; set; } = null!;
+        }
     }
 }

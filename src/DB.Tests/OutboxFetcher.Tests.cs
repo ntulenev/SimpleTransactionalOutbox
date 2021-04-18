@@ -79,6 +79,7 @@ namespace DB.Tests
                 MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
                 OccurredOn = date.AddMinutes(x)
             }));
+            ctx.SaveChanges();
             var fetcher = new OutboxFetcher(ctx);
             var result = (IEnumerable<IOutboxMessage>)null!;
 
@@ -88,6 +89,7 @@ namespace DB.Tests
             // Assert
             exception.Should().BeNull();
             int indexer = 0;
+            result.Should().HaveCount(10);
             foreach (var item in result)
             {
                 item.Body.Should().Be($"{indexer}");

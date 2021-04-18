@@ -36,6 +36,8 @@ namespace DB
                 throw new ArgumentNullException(nameof(message));
             }
 
+            ThrowIfDisposed();
+
             _logger.LogInformation("Removing message {@message}.", message);
 
             var item = await _context.OutboxMessages.SingleAsync(x => x.MessageId == message.MessageId, cancellationToken).ConfigureAwait(false);
