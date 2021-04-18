@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Threading;
 
 using Xunit;
 
@@ -11,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
 using Abstractions.DB;
-using System.Threading;
 using Abstractions.Service;
 
 namespace Logic.Tests

@@ -1,6 +1,4 @@
-﻿using Abstractions.DB;
-using Abstractions.Models;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Abstractions.Serialization;
+using Abstractions.DB;
+using Abstractions.Models;
 
 namespace DB
 {

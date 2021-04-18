@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Threading;
 
 using Confluent.Kafka;
 
@@ -13,8 +14,6 @@ using Xunit;
 using Abstractions.Models;
 
 using FluentAssertions;
-using System.Threading;
-using Xunit.Sdk;
 
 namespace Transport.Tests
 {

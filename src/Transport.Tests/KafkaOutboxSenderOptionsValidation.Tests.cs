@@ -2,8 +2,9 @@
 
 using FluentAssertions;
 
-using Transport.Validation;
 using Microsoft.Extensions.Options;
+
+using Transport.Validation;
 
 namespace Transport.Tests
 {

@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Abstractions.Models;
 
 namespace Logic.Tests
