@@ -22,7 +22,7 @@ namespace DB
         /// <param name="logger">Logger.</param>
         public OutboxUnitOfWork(
             OutboxContext context,
-            ILogger<ProcessingDataUnitOfWork> logger)
+            ILogger<OutboxUnitOfWork> logger)
            : base(context, System.Data.IsolationLevel.Serializable, logger)
         {
         }
