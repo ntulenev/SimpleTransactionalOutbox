@@ -46,6 +46,58 @@ namespace DB.Tests
         }
 
 
+        [Fact(DisplayName = "ProcessingDataUnitOfWork cant be created with null logger.")]
+        [Trait("Category", "Unit")]
+        public void CantCreateWithNullLogger()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = (ILogger<ProcessingDataUnitOfWork>)null!;
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            // Act
+            var exception = Record.Exception(() => new ProcessingDataUnitOfWork(ctx, logger, serializer.Object));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork cant be created with null serializer.")]
+        [Trait("Category", "Unit")]
+        public void CantCreateWithNullSerializer()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = (ISerializer<IProcessingData>)null!;
+
+            // Act
+            var exception = Record.Exception(() => new ProcessingDataUnitOfWork(ctx, logger.Object, serializer));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork can be created.")]
+        [Trait("Category", "Unit")]
+        public void CanCreateWithValidParams()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            // Act
+            var exception = Record.Exception(() => new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object));
+
+            // Assert
+            exception.Should().BeNull();
+        }
+
+
 
         public void Dispose()
         {
