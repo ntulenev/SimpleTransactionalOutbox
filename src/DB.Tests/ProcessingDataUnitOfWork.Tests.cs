@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Xunit;
 
@@ -101,7 +102,7 @@ namespace DB.Tests
 
         [Fact(DisplayName = "ProcessingDataUnitOfWork can't process null data.")]
         [Trait("Category", "Unit")]
-        public async Task CanProcessNullDataAsync()
+        public async Task CantProcessNullDataAsync()
         {
 
             // Arrange
@@ -117,9 +118,85 @@ namespace DB.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
-        // TODO: Add Can process new item test
-        // TODO: Add Can process exists item test
+        public class TestData : IProcessingData
+        {
+            public long Id { get; set; }
 
+            public int Value { get; set; }
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork can process new data.")]
+        [Trait("Category", "Unit")]
+        public async Task CanProcessNewDataAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+            var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await uow.ProcessDataAsync(data, CancellationToken.None);
+                await uow.SaveAsync(CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().BeNull();
+
+            ctx.ProcessingData.Should().HaveCount(1);
+            ctx.ProcessingData.Single().Id.Should().Be(data.Id);
+            ctx.ProcessingData.Single().Value.Should().Be(data.Value);
+
+            ctx.OutboxMessages.Should().HaveCount(1);
+            ctx.OutboxMessages.Single().Body.Should().Be(testJson);
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork can rollback new data.")]
+        [Trait("Category", "Unit")]
+        public async Task CanProcessNewDataRollBackAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                using var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+                await uow.ProcessDataAsync(data, CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().BeNull();
+
+            ctx.ProcessingData.Should().HaveCount(0);
+
+            ctx.OutboxMessages.Should().HaveCount(0);
+        }
+
+        // TODO: Add Can process exists item test
+        // TODO: Add Can process exists item test (RollBack)
+        // TODO ObjectDisposedException Dispose / DisposeAsync
 
         public void Dispose()
         {
