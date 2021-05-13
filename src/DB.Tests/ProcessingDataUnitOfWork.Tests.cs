@@ -12,6 +12,8 @@ using Moq;
 
 using Abstractions.Models;
 using Abstractions.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace DB.Tests
 {
@@ -95,6 +97,24 @@ namespace DB.Tests
 
             // Assert
             exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork can't process null data.")]
+        [Trait("Category", "Unit")]
+        public async Task CanProcessNullDataAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+            var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+            var data = (IProcessingData)null!;
+            // Act
+            var exception = await Record.ExceptionAsync(() => uow.ProcessDataAsync(data, CancellationToken.None));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
 
