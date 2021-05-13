@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Xunit;
 
@@ -12,8 +14,6 @@ using Moq;
 
 using Abstractions.Models;
 using Abstractions.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DB.Tests
 {
@@ -117,6 +117,8 @@ namespace DB.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
+        // TODO: Add Can process new item test
+        // TODO: Add Can process exists item test
 
 
         public void Dispose()
