@@ -280,8 +280,123 @@ namespace DB.Tests
             ctx.OutboxMessages.Should().HaveCount(0);
         }
 
+        [Fact(DisplayName = "ProcessingDataUnitOfWork cant be processed after dispose.")]
+        [Trait("Category", "Unit")]
+        public async Task CantProcessOnDisposeAsync()
+        {
 
-        // TODO ObjectDisposedException Dispose / DisposeAsync
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+            var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+            uow.Dispose();
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await uow.ProcessDataAsync(data, CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork cant be saved after dispose.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSaveOnDisposeAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+            var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+            uow.Dispose();
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await uow.SaveAsync(CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork cant be processed after dispose async.")]
+        [Trait("Category", "Unit")]
+        public async Task CantProcessOnDispose2Async()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+            var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+            await uow.DisposeAsync();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await uow.ProcessDataAsync(data, CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork cant be saved after dispose async.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSaveOnDispose2Async()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+            var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+            await uow.DisposeAsync();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await uow.SaveAsync(CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
 
         public void Dispose()
         {

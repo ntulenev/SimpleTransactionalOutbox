@@ -39,6 +39,8 @@ namespace DB
                 throw new ArgumentNullException(nameof(data));
             }
 
+            ThrowIfDisposed();
+
             _logger.LogInformation("Starting process {@data}.", data);
 
             var item = await _context.ProcessingData.SingleOrDefaultAsync(x => x.Id == data.Id, cancellationToken).ConfigureAwait(false);
