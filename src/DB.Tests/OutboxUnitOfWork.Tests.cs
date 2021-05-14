@@ -121,6 +121,24 @@ namespace DB.Tests
             exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
         }
 
+        [Fact(DisplayName = "OutboxUnitOfWork can't save if disposed.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSaveWithDisposedObjectAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+            var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+            outbox.Dispose();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await outbox.SaveAsync(CancellationToken.None));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
+
         [Fact(DisplayName = "OutboxUnitOfWork can't work if disposed async.")]
         [Trait("Category", "Unit")]
         public async Task CantWorkWithDisposedObjectAsync2()
@@ -134,6 +152,24 @@ namespace DB.Tests
 
             // Act
             var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(new TestMessage(), CancellationToken.None));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
+        }
+
+        [Fact(DisplayName = "OutboxUnitOfWork can't save if disposed async.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSaveWithDisposedObjectAsync2()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+            var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+            await outbox.DisposeAsync();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () => await outbox.SaveAsync(CancellationToken.None));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
