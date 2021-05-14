@@ -194,8 +194,93 @@ namespace DB.Tests
             ctx.OutboxMessages.Should().HaveCount(0);
         }
 
-        // TODO: Add Can process exists item test
-        // TODO: Add Can process exists item test (RollBack)
+        [Fact(DisplayName = "ProcessingDataUnitOfWork can process exits data.")]
+        [Trait("Category", "Unit")]
+        public async Task CanProcessExistsDataAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            _ctx.ProcessingData.Add(new ProcessingData
+            {
+                Id = 1,
+                Value = 42
+
+            });
+            _ctx.SaveChanges();
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+            var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                await uow.ProcessDataAsync(data, CancellationToken.None);
+                await uow.SaveAsync(CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().BeNull();
+
+            ctx.ProcessingData.Should().HaveCount(1);
+            ctx.ProcessingData.Single().Id.Should().Be(data.Id);
+            ctx.ProcessingData.Single().Value.Should().Be(data.Value);
+
+            ctx.OutboxMessages.Should().HaveCount(1);
+            ctx.OutboxMessages.Single().Body.Should().Be(testJson);
+        }
+
+        [Fact(DisplayName = "ProcessingDataUnitOfWork can rollback exists data.")]
+        [Trait("Category", "Unit")]
+        public async Task CanProcessExistsDataRollBackAsync()
+        {
+
+            // Arrange
+            var ctx = _ctx;
+            var oldData = new ProcessingData
+            {
+                Id = 1,
+                Value = 42
+            };
+            _ctx.ProcessingData.Add(oldData);
+            _ctx.SaveChanges();
+            var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
+            var serializer = new Mock<ISerializer<IProcessingData>>();
+
+            var data = new TestData
+            {
+                Id = 1,
+                Value = 2
+            };
+            var testJson = "test";
+            serializer.Setup(x => x.Serialize(data)).Returns(testJson);
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+            {
+                using var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
+                await uow.ProcessDataAsync(data, CancellationToken.None);
+            });
+
+            // Assert
+            exception.Should().BeNull();
+
+            // AsNoTracking to check real not cached data
+            ctx.ProcessingData.AsNoTracking().Should().HaveCount(1);
+            ctx.ProcessingData.AsNoTracking().Single().Id.Should().Be(1);
+            ctx.ProcessingData.AsNoTracking().Single().Value.Should().Be(42);
+
+            ctx.OutboxMessages.Should().HaveCount(0);
+        }
+
+
         // TODO ObjectDisposedException Dispose / DisposeAsync
 
         public void Dispose()
