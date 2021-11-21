@@ -37,7 +37,7 @@ namespace Logic
                 throw new ArgumentNullException(nameof(data));
             }
 
-            using var _ = _logger.BeginScope("Processing data {@data}.");
+            using var _ = _logger.BeginScope("Processing data {@data}.", data);
 
             _logger.LogInformation("Start processing.");
 
