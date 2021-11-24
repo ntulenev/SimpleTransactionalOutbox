@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace Abstractions.Service
+﻿namespace Abstractions.Service
 {
     /// <summary>
     /// Outbox service interface.

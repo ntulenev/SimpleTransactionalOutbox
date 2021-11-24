@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Abstractions.Models
+﻿namespace Abstractions.Models
 {
     /// <summary>
     /// Outbox message interface.

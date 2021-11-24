@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace Abstractions.DB
+﻿namespace Abstractions.DB
 {
     /// <summary>
     /// Interface that represents UnitOfWork pattern.

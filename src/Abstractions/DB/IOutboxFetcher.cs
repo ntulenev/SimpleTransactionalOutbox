@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Abstractions.Models;
+﻿using Abstractions.Models;
 
 namespace Abstractions.DB
 {
