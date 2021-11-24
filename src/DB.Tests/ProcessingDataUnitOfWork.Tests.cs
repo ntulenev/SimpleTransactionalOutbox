@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Linq;
-
-using Xunit;
+﻿using Xunit;
 
 using FluentAssertions;
 
