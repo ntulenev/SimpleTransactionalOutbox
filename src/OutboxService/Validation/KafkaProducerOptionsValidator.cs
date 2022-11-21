@@ -12,7 +12,7 @@ namespace OutboxService.Validation
         /// <summary>
         /// Validates configuration.
         /// </summary>
-        public ValidateOptionsResult Validate(string name, KafkaProducerOptions options)
+        public ValidateOptionsResult Validate(string? name, KafkaProducerOptions options)
         {
             if (options is null)
             {

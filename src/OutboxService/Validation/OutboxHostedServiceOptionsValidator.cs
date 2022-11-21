@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 
 using OutboxService.Config;
-
+using System;
+using System.Diagnostics;
 
 namespace OutboxService.Validation
 {
@@ -13,7 +14,7 @@ namespace OutboxService.Validation
         /// <summary>
         /// Validates configuration.
         /// </summary>
-        public ValidateOptionsResult Validate(string name, OutboxHostedServiceOptions options)
+        public ValidateOptionsResult Validate(string? name, OutboxHostedServiceOptions options)
         {
             if (options is null)
             {
