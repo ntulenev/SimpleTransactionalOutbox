@@ -1,14 +1,13 @@
-﻿namespace Abstractions.DB
+﻿namespace Abstractions.DB;
+
+/// <summary>
+/// Interface that represents UnitOfWork pattern.
+/// </summary>
+public interface IUnitOfWork
 {
     /// <summary>
-    /// Interface that represents UnitOfWork pattern.
+    /// Commits operation results to the storage.
     /// </summary>
-    public interface IUnitOfWork
-    {
-        /// <summary>
-        /// Commits operation results to the storage.
-        /// </summary>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        Task SaveAsync(CancellationToken cancellationToken = default);
-    }
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task SaveAsync(CancellationToken cancellationToken = default);
 }

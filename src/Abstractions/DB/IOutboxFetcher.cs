@@ -1,17 +1,16 @@
 ﻿using Abstractions.Models;
 
-namespace Abstractions.DB
+namespace Abstractions.DB;
+
+/// <summary>
+/// Outbox messages fetcher.
+/// </summary>
+public interface IOutboxFetcher
 {
     /// <summary>
-    /// Outbox messages fetcher.
+    /// Pools actual outbox messages from storage.
     /// </summary>
-    public interface IOutboxFetcher
-    {
-        /// <summary>
-        /// Pools actual outbox messages from storage.
-        /// </summary>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>Collection of actual outbox messages</returns>
-        Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default);
-    }
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Collection of actual outbox messages</returns>
+    Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default);
 }

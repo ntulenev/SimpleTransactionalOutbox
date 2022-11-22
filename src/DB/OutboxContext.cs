@@ -2,42 +2,41 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace DB
+namespace DB;
+
+/// <summary>
+/// Database context.
+/// </summary>
+public class OutboxContext : DbContext
 {
     /// <summary>
-    /// Database context.
+    /// Outbox messages table.
     /// </summary>
-    public class OutboxContext : DbContext
+    public virtual DbSet<OutboxMessage> OutboxMessages { get; set; } = default!;
+
+    /// <summary>
+    /// Processing data table.
+    /// </summary>
+    public virtual DbSet<ProcessingData> ProcessingData { get; set; } = default!;
+
+    /// <summary>
+    /// Creates <see cref="OutboxContext"/> instase.
+    /// </summary>
+    /// <param name="contextOptions">Options for context.</param>
+    public OutboxContext(DbContextOptions<OutboxContext> contextOptions)
+       : base(contextOptions)
     {
-        /// <summary>
-        /// Outbox messages table.
-        /// </summary>
-        public virtual DbSet<OutboxMessage> OutboxMessages { get; set; } = default!;
+        Database.EnsureCreated();
+    }
 
-        /// <summary>
-        /// Processing data table.
-        /// </summary>
-        public virtual DbSet<ProcessingData> ProcessingData { get; set; } = default!;
+    protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)
+    {
+        _ = modelBuilder.Entity<OutboxMessage>()
+            .HasKey(o => o.MessageId);
 
-        /// <summary>
-        /// Creates <see cref="OutboxContext"/> instase.
-        /// </summary>
-        /// <param name="contextOptions">Options for context.</param>
-        public OutboxContext(DbContextOptions<OutboxContext> contextOptions)
-           : base(contextOptions)
-        {
-            Database.EnsureCreated();
-        }
+        _ = modelBuilder.Entity<ProcessingData>()
+            .HasKey(e => e.Id);
 
-        protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)
-        {
-            _ = modelBuilder.Entity<OutboxMessage>()
-                .HasKey(o => o.MessageId);
-
-            _ = modelBuilder.Entity<ProcessingData>()
-                .HasKey(e => e.Id);
-
-            base.OnModelCreating(modelBuilder);
-        }
+        base.OnModelCreating(modelBuilder);
     }
 }

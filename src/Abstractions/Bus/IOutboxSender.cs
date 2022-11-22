@@ -1,17 +1,16 @@
 ﻿using Abstractions.Models;
 
-namespace Abstractions.Bus
+namespace Abstractions.Bus;
+
+/// <summary>
+/// Message publisher.
+/// </summary>
+public interface IOutboxSender
 {
     /// <summary>
-    /// Message publisher.
+    /// Publishes <paramref name="message"/> to external system.
     /// </summary>
-    public interface IOutboxSender
-    {
-        /// <summary>
-        /// Publishes <paramref name="message"/> to external system.
-        /// </summary>
-        /// <param name="message">Message to publish.</param>
-        /// <param name="cancellationToken">Canellation token.</param>
-        public Task SendAsync(IOutboxMessage message, CancellationToken cancellationToken = default);
-    }
+    /// <param name="message">Message to publish.</param>
+    /// <param name="cancellationToken">Canellation token.</param>
+    public Task SendAsync(IOutboxMessage message, CancellationToken cancellationToken = default);
 }

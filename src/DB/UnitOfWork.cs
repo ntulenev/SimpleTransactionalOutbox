@@ -6,148 +6,147 @@ using Microsoft.Extensions.Logging;
 
 using Abstractions.DB;
 
-namespace DB
+namespace DB;
+
+/// <summary>
+/// Base UnitOfWork class.
+/// </summary>
+/// <typeparam name="TContext"></typeparam>
+public abstract class UnitOfWork<TContext> :
+    IUnitOfWork,
+    IDisposable,
+    IAsyncDisposable
+    where TContext : DbContext
 {
     /// <summary>
-    /// Base UnitOfWork class.
+    /// Creates <see cref="UnitOfWork{TContext}"/>.
     /// </summary>
-    /// <typeparam name="TContext"></typeparam>
-    public abstract class UnitOfWork<TContext> :
-        IUnitOfWork,
-        IDisposable,
-        IAsyncDisposable
-        where TContext : DbContext
+    /// <param name="context">Database context.</param>
+    /// <param name="isolationLevel">Transaction isolation level.</param>
+    /// <param name="logger">Logger.</param>
+    public UnitOfWork(
+        TContext context,
+        IsolationLevel? isolationLevel,
+        ILogger<UnitOfWork<TContext>> logger)
     {
-        /// <summary>
-        /// Creates <see cref="UnitOfWork{TContext}"/>.
-        /// </summary>
-        /// <param name="context">Database context.</param>
-        /// <param name="isolationLevel">Transaction isolation level.</param>
-        /// <param name="logger">Logger.</param>
-        public UnitOfWork(
-            TContext context,
-            IsolationLevel? isolationLevel,
-            ILogger<UnitOfWork<TContext>> logger)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            if (isolationLevel is not null)
-            {
-                _transaction =
-                    context.Database
-                        .BeginTransaction(isolationLevel.Value);
-            }
-            _logger.LogInformation("UOF with transaction created.");
+        if (isolationLevel is not null)
+        {
+            _transaction =
+                context.Database
+                    .BeginTransaction(isolationLevel.Value);
+        }
+        _logger.LogInformation("UOF with transaction created.");
+    }
+
+    /// <summary>
+    /// Disposes unit of work.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_isDisposed)
+        {
+            return;
         }
 
-        /// <summary>
-        /// Disposes unit of work.
-        /// </summary>
-        public void Dispose()
+        Dispose(true);
+        _isDisposed = true;
+
+        _logger.LogInformation("Instance disposed.");
+
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Disposes unit of work is async way.
+    /// </summary>
+    public async ValueTask DisposeAsync()
+    {
+        if (_isDisposed)
         {
-            if (_isDisposed)
-            {
-                return;
-            }
-
-            Dispose(true);
-            _isDisposed = true;
-
-            _logger.LogInformation("Instance disposed.");
-
-            GC.SuppressFinalize(this);
+            return;
         }
 
-        /// <summary>
-        /// Disposes unit of work is async way.
-        /// </summary>
-        public async ValueTask DisposeAsync()
-        {
-            if (_isDisposed)
-            {
-                return;
-            }
+        await DisposeCoreAsync().ConfigureAwait(false);
 
-            await DisposeCoreAsync().ConfigureAwait(false);
+        Dispose(false);
 
-            Dispose(false);
+        _isDisposed = true;
 
-            _isDisposed = true;
-
-            _logger.LogInformation("Instance disposed");
+        _logger.LogInformation("Instance disposed");
 
 #pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
-            GC.SuppressFinalize(this);
+        GC.SuppressFinalize(this);
 #pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
-        }
+    }
 
-        /// <inheritdoc/>
-        public async Task SaveAsync(CancellationToken cancellationToken = default)
+    /// <inheritdoc/>
+    public async Task SaveAsync(CancellationToken cancellationToken = default)
+    {
+        ThrowIfDisposed();
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        using var loggingScope = _logger.BeginScope("Starting save changes.");
+
+        try
         {
-            ThrowIfDisposed();
+            _ = await _context.SaveChangesAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            cancellationToken.ThrowIfCancellationRequested();
+            _logger.LogInformation("Changes has been saved.");
 
-            using var loggingScope = _logger.BeginScope("Starting save changes.");
-
-            try
+            if (_transaction is not null)
             {
-                _ = await _context.SaveChangesAsync(cancellationToken)
-                    .ConfigureAwait(false);
+                await _transaction.CommitAsync(cancellationToken)
+                                  .ConfigureAwait(false);
 
-                _logger.LogInformation("Changes has been saved.");
-
-                if (_transaction is not null)
-                {
-                    await _transaction.CommitAsync(cancellationToken)
-                                      .ConfigureAwait(false);
-
-                    _logger.LogInformation("Transaction committed successfully.");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error on saving data in database.");
-                throw;
+                _logger.LogInformation("Transaction committed successfully.");
             }
         }
-
-        protected void ThrowIfDisposed()
+        catch (Exception ex)
         {
-            if (_isDisposed)
-            {
-                throw new ObjectDisposedException(GetType().FullName);
-            }
+            _logger.LogError(ex, "Error on saving data in database.");
+            throw;
         }
+    }
 
-        protected virtual void Dispose(bool disposing)
+    protected void ThrowIfDisposed()
+    {
+        if (_isDisposed)
         {
-            if (disposing)
-            {
-                if (_transaction is not null)
-                {
-                    _transaction?.Dispose();
-                }
-            }
-
-            _transaction = null!;
+            throw new ObjectDisposedException(GetType().FullName);
         }
+    }
 
-        protected async virtual ValueTask DisposeCoreAsync()
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
         {
             if (_transaction is not null)
             {
-                await _transaction.DisposeAsync()
-                                  .ConfigureAwait(false);
+                _transaction?.Dispose();
             }
-
-            _transaction = null!;
         }
 
-        protected readonly ILogger _logger;
-        protected readonly TContext _context;
-        private IDbContextTransaction? _transaction;
-        private bool _isDisposed;
+        _transaction = null!;
     }
+
+    protected async virtual ValueTask DisposeCoreAsync()
+    {
+        if (_transaction is not null)
+        {
+            await _transaction.DisposeAsync()
+                              .ConfigureAwait(false);
+        }
+
+        _transaction = null!;
+    }
+
+    protected readonly ILogger _logger;
+    protected readonly TContext _context;
+    private IDbContextTransaction? _transaction;
+    private bool _isDisposed;
 }

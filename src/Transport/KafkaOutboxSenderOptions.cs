@@ -1,13 +1,12 @@
-﻿namespace Transport
+﻿namespace Transport;
+
+/// <summary>
+/// Config options for Kafka sender.
+/// </summary>
+public class KafkaOutboxSenderOptions
 {
     /// <summary>
-    /// Config options for Kafka sender.
+    /// Kafka topic name.
     /// </summary>
-    public class KafkaOutboxSenderOptions
-    {
-        /// <summary>
-        /// Kafka topic name.
-        /// </summary>
-        public string TopicName { get; set; } = default!;
-    }
+    public string TopicName { get; set; } = default!;
 }
