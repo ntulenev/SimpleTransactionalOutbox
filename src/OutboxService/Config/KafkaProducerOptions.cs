@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace OutboxService.Config;
+﻿namespace OutboxService.Config;
 
 /// <summary>
 /// Config options for Kafka producer.
