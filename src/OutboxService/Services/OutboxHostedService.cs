@@ -10,7 +10,7 @@ namespace OutboxService.Services;
 /// <summary>
 /// Outbox processing service.
 /// </summary>
-public class OutboxHostedService : IHostedService
+public class OutboxHostedService : BackgroundService
 {
     /// <summary>
     /// Creates <see cref="OutboxHostedService"/>.
@@ -38,58 +38,32 @@ public class OutboxHostedService : IHostedService
         _delay = TimeSpan.FromSeconds(options.Value.DelayInSeconds);
     }
 
-    /// <summary>
-    /// Starts service logic.
-    /// </summary>
-    public Task StartAsync(CancellationToken cancellationToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _outboxTask = Task.Run(async () =>
+        return Task.Run(async () =>
         {
-            while (!_hostApplicationLifetime.ApplicationStopping.IsCancellationRequested)
+            while (true)
             {
-                using var scope = _serviceScopeFactory.CreateScope();
+                try
                 {
-                    var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
-                    await outbox.RunProcessingAsync(_hostApplicationLifetime.ApplicationStopping).ConfigureAwait(false);
-                }
+                    _hostApplicationLifetime.ApplicationStopping.ThrowIfCancellationRequested();
 
-                await Task.Delay(_delay).ConfigureAwait(false);
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    {
+                        var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
+                        await outbox.RunProcessingAsync(_hostApplicationLifetime.ApplicationStopping).ConfigureAwait(false);
+                    }
+
+                    await Task.Delay(_delay).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _logger.LogError(ex, "Error while processing outbox");
+                    throw;
+                }
             }
         }, _hostApplicationLifetime.ApplicationStopping);
-
-        _ = _outboxTask.ContinueWith(t =>
-        {
-            if (t.IsFaulted)
-            {
-                _logger?.LogError("Outbox processing encountered error", t.Exception);
-
-                _logger?.LogInformation("Stopping the application");
-
-                _hostApplicationLifetime.StopApplication();
-            }
-        });
-
-        return Task.CompletedTask;
     }
-
-    /// <summary>
-    /// Stops service logic.
-    /// </summary>
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        try
-        {
-            Debug.Assert(_outboxTask != null);
-            await _outboxTask.ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-
-        _logger?.LogInformation("The service is stopped");
-    }
-
-    private Task? _outboxTask;
 
     private readonly TimeSpan _delay;
     private readonly ILogger<OutboxHostedService> _logger;
