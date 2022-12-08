@@ -401,5 +401,5 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
     }
 
     private readonly OutboxContext _ctx;
-    private SqliteConnection _conn;
+    private readonly SqliteConnection _conn;
 }
