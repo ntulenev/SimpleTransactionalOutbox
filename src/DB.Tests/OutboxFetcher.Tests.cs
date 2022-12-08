@@ -59,7 +59,7 @@ public class OutboxFetcherTests : IDisposable
         exception.Should().BeNull();
     }
 
-    [Fact(DisplayName = "OutboxFetcher cant be created with valid context.")]
+    [Fact(DisplayName = "OutboxFetcher can be created with valid context.")]
     [Trait("Category", "Unit")]
     public async Task CanReadMessagesFromStorageAsync()
     {
@@ -76,9 +76,10 @@ public class OutboxFetcherTests : IDisposable
         ctx.SaveChanges();
         var fetcher = new OutboxFetcher(ctx);
         var result = (IEnumerable<IOutboxMessage>)null!;
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
-        var exception = await Record.ExceptionAsync(async () => result = await fetcher.ReadOutboxMessagesAsync(CancellationToken.None));
+        var exception = await Record.ExceptionAsync(async () => result = await fetcher.ReadOutboxMessagesAsync(tokenSource.Token));
 
         // Assert
         exception.Should().BeNull();
@@ -94,5 +95,5 @@ public class OutboxFetcherTests : IDisposable
     }
 
     private readonly OutboxContext _ctx;
-    private SqliteConnection _conn;
+    private readonly SqliteConnection _conn;
 }
