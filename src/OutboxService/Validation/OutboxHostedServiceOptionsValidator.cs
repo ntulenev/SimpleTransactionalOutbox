@@ -19,9 +19,9 @@ public class OutboxHostedServiceOptionsValidator : IValidateOptions<OutboxHosted
             return ValidateOptionsResult.Fail("Configuration object is null.");
         }
 
-        if (options.DelayInSeconds <= 0)
+        if (options.Delay != TimeSpan.Zero)
         {
-            return ValidateOptionsResult.Fail($"{nameof(options.DelayInSeconds)} should be positive.");
+            return ValidateOptionsResult.Fail($"{nameof(options.Delay)} should be positive.");
         }
 
         return ValidateOptionsResult.Success;

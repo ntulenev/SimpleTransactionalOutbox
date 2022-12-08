@@ -6,7 +6,7 @@
 public class OutboxHostedServiceOptions
 {
     /// <summary>
-    /// Starting interval (in seconds).
+    /// Starting interval.
     /// </summary>
-    public int DelayInSeconds { get; set; }
+    public TimeSpan Delay { get; set; }
 }

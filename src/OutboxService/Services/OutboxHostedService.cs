@@ -35,7 +35,7 @@ public class OutboxHostedService : BackgroundService
             throw new ArgumentException("Options value is not set", nameof(options));
         }
 
-        _delay = TimeSpan.FromSeconds(options.Value.DelayInSeconds);
+        _delay = options.Value.Delay;
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
