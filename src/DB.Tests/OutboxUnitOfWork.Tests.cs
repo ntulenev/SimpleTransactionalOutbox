@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 
 using Abstractions.Models;
-
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DB.Tests;
 
@@ -40,10 +40,10 @@ public class OutboxUnitOfWorkTests : IDisposable
 
         // Arrange
         var ctx = (OutboxContext)null!;
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
 
         // Act
-        var exception = Record.Exception(() => new OutboxUnitOfWork(ctx, logger.Object));
+        var exception = Record.Exception(() => new OutboxUnitOfWork(ctx, logger));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -72,10 +72,10 @@ public class OutboxUnitOfWorkTests : IDisposable
 
         // Arrange
         var ctx = _ctx;
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
 
         // Act
-        var exception = Record.Exception(() => new OutboxUnitOfWork(ctx, logger.Object));
+        var exception = Record.Exception(() => new OutboxUnitOfWork(ctx, logger));
 
         // Assert
         exception.Should().BeNull();
@@ -88,11 +88,12 @@ public class OutboxUnitOfWorkTests : IDisposable
 
         // Arrange
         var ctx = _ctx;
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
-        var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
-        var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(null!, CancellationToken.None));
+        var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(null!, tokenSource.Token));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -105,12 +106,13 @@ public class OutboxUnitOfWorkTests : IDisposable
 
         // Arrange
         var ctx = _ctx;
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
-        var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
         outbox.Dispose();
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
-        var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(new TestMessage(), CancellationToken.None));
+        var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(new TestMessage(), tokenSource.Token));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
@@ -123,12 +125,13 @@ public class OutboxUnitOfWorkTests : IDisposable
 
         // Arrange
         var ctx = _ctx;
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
-        var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
         outbox.Dispose();
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
-        var exception = await Record.ExceptionAsync(async () => await outbox.SaveAsync(CancellationToken.None));
+        var exception = await Record.ExceptionAsync(async () => await outbox.SaveAsync(tokenSource.Token));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
@@ -141,12 +144,13 @@ public class OutboxUnitOfWorkTests : IDisposable
 
         // Arrange
         var ctx = _ctx;
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
-        var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
         await outbox.DisposeAsync();
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
-        var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(new TestMessage(), CancellationToken.None));
+        var exception = await Record.ExceptionAsync(async () => await outbox.RemoveOutboxMessageAsync(new TestMessage(), tokenSource.Token));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
@@ -159,12 +163,13 @@ public class OutboxUnitOfWorkTests : IDisposable
 
         // Arrange
         var ctx = _ctx;
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
-        var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
         await outbox.DisposeAsync();
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
-        var exception = await Record.ExceptionAsync(async () => await outbox.SaveAsync(CancellationToken.None));
+        var exception = await Record.ExceptionAsync(async () => await outbox.SaveAsync(tokenSource.Token));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
@@ -192,8 +197,9 @@ public class OutboxUnitOfWorkTests : IDisposable
         ctx.OutboxMessages.Add(msg1);
         ctx.OutboxMessages.Add(msg2);
         ctx.SaveChanges();
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
-        var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
         var exception = await Record.ExceptionAsync(async () =>
@@ -202,7 +208,7 @@ public class OutboxUnitOfWorkTests : IDisposable
             {
                 MessageId = msg1.MessageId
             }, CancellationToken.None);
-            await outbox.SaveAsync(CancellationToken.None);
+            await outbox.SaveAsync(tokenSource.Token);
         });
 
         // Assert
@@ -226,8 +232,9 @@ public class OutboxUnitOfWorkTests : IDisposable
         };
         ctx.OutboxMessages.Add(msg);
         ctx.SaveChanges();
-        var logger = new Mock<ILogger<OutboxUnitOfWork>>();
-        var outbox = new OutboxUnitOfWork(ctx, logger.Object);
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
+        using var tokenSource = new CancellationTokenSource();
 
         // Act
         var exception = await Record.ExceptionAsync(async () =>
@@ -235,7 +242,7 @@ public class OutboxUnitOfWorkTests : IDisposable
             await outbox.RemoveOutboxMessageAsync(new TestMessage
             {
                 MessageId = msg.MessageId
-            }, CancellationToken.None);
+            }, tokenSource.Token);
         });
 
         // Assert
@@ -244,7 +251,7 @@ public class OutboxUnitOfWorkTests : IDisposable
     }
 
     private readonly OutboxContext _ctx;
-    private SqliteConnection _conn;
+    private readonly SqliteConnection _conn;
 
     private class TestMessage : IOutboxMessage
     {
