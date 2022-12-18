@@ -8,7 +8,7 @@ namespace Abstractions.DB;
 public interface IProcessingDataUnitOfWork : IUnitOfWork
 {
     /// <summary>
-    /// Addes new <paramref name="data"/> to the stotage.
+    /// Adds new <paramref name="data"/> to the stotage.
     /// </summary>
     /// <param name="data">Processing data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>

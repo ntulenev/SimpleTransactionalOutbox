@@ -15,7 +15,7 @@ public class ProcessingDataUnitOfWork : UnitOfWork<OutboxContext>, IProcessingDa
     /// <summary>
     /// Creates <see cref="ProcessingDataUnitOfWork"/>.
     /// </summary>
-    /// <param name="context">Databaes contex.</param>
+    /// <param name="context">Database context.</param>
     /// <param name="logger">Logger.</param>
     /// <param name="serializer">Serializer.</param>
     public ProcessingDataUnitOfWork(

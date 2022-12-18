@@ -20,13 +20,13 @@ public class OutboxContext : DbContext
     public virtual DbSet<ProcessingData> ProcessingData { get; set; } = default!;
 
     /// <summary>
-    /// Creates <see cref="OutboxContext"/> instase.
+    /// Creates <see cref="OutboxContext"/> instance.
     /// </summary>
     /// <param name="contextOptions">Options for context.</param>
     public OutboxContext(DbContextOptions<OutboxContext> contextOptions)
        : base(contextOptions)
     {
-        Database.EnsureCreated();
+        _ = Database.EnsureCreated();
     }
 
     protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)

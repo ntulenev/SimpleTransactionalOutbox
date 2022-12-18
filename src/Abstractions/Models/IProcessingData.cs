@@ -11,7 +11,7 @@ public interface IProcessingData
     public long Id { get; }
 
     /// <summary>
-    /// Value of the proccesing data.
+    /// Value of the processing data.
     /// </summary>
     public int Value { get; }
 }

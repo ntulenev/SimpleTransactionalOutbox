@@ -134,7 +134,7 @@ public abstract class UnitOfWork<TContext> :
         _transaction = null!;
     }
 
-    protected async virtual ValueTask DisposeCoreAsync()
+    protected virtual async ValueTask DisposeCoreAsync()
     {
         if (_transaction is not null)
         {

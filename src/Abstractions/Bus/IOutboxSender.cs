@@ -11,6 +11,6 @@ public interface IOutboxSender
     /// Publishes <paramref name="message"/> to external system.
     /// </summary>
     /// <param name="message">Message to publish.</param>
-    /// <param name="cancellationToken">Canellation token.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public Task SendAsync(IOutboxMessage message, CancellationToken cancellationToken = default);
 }

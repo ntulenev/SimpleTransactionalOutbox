@@ -8,7 +8,7 @@ using Models;
 namespace WebApi.Controllers;
 
 /// <summary>
-/// Api controller for incomming data messages.
+/// Api controller for incoming data messages.
 /// </summary>
 [ApiController]
 [Route("")]

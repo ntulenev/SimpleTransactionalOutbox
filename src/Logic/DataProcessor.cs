@@ -7,7 +7,7 @@ using Abstractions.Service;
 namespace Logic;
 
 /// <summary>
-/// Processor for incomming data message.
+/// Processor for incoming data message.
 /// </summary>
 public class DataProcessor : IDataProcessor
 {
