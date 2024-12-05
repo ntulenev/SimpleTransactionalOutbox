@@ -32,10 +32,7 @@ public class KafkaOutboxSender : IOutboxSender
         _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        if (options is null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
+        ArgumentNullException.ThrowIfNull(options);
 
         if (options.Value is null)
         {
@@ -48,10 +45,7 @@ public class KafkaOutboxSender : IOutboxSender
     /// <inheritdoc/>
     public async Task SendAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
     {
-        if (message is null)
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
+        ArgumentNullException.ThrowIfNull(message);
 
         var strMessage = _serializer.Serialize(message);
 
@@ -67,7 +61,7 @@ public class KafkaOutboxSender : IOutboxSender
         }
         catch (ProduceException<Null, string> e)
         {
-            _logger.LogError(e, $"Delivery failed: {e.Error.Reason}.");
+            _logger.LogError(e, "Delivery failed");
             throw;
         }
     }

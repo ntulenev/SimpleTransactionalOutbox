@@ -78,7 +78,7 @@ public class KafkaOutboxSenderOptionsValidationTests
 
 	[Fact(DisplayName = "KafkaOutboxSenderOptionsValidation fails on topic with only spaces.")]
 	[Trait("Category", "Unit")]
-	public void FailsIfOptionsTopicWithInluSpaces()
+	public void FailsIfOptionsTopicWithOnlySpaces()
 	{
 		// Assert
 		var validator = new KafkaOutboxSenderOptionsValidation();

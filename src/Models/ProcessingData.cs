@@ -5,22 +5,16 @@ namespace Models;
 /// <summary>
 /// Processing data message.
 /// </summary>
-public class ProcessingData : IProcessingData
+/// <remarks>
+/// Creates <see cref="ProcessingData"/>.
+/// </remarks>
+/// <param name="id">Data id.</param>
+/// <param name="value">Data value.</param>
+public class ProcessingData(int id, int value) : IProcessingData
 {
     /// <inheritdoc/>
-    public long Id { get; }
+    public long Id { get; } = id;
 
     /// <inheritdoc/>
-    public int Value { get; }
-
-    /// <summary>
-    /// Creates <see cref="ProcessingData"/>.
-    /// </summary>
-    /// <param name="id">Data id.</param>
-    /// <param name="value">Data value.</param>
-    public ProcessingData(int id, int value)
-    {
-        Id = id;
-        Value = value;
-    }
+    public int Value { get; } = value;
 }

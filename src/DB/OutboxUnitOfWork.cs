@@ -26,11 +26,7 @@ public class OutboxUnitOfWork : UnitOfWork<OutboxContext>, IOutboxUnitOfWork
     /// <inheritdoc/>
     public async Task RemoveOutboxMessageAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
     {
-
-        if (message is null)
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
+        ArgumentNullException.ThrowIfNull(message);
 
         ThrowIfDisposed();
 

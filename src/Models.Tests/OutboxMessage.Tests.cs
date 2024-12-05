@@ -37,7 +37,7 @@ public class OutboxMessageTests
         exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
     }
 
-    [Fact(DisplayName = "OutboxMessage can't be created with witespaces body.")]
+    [Fact(DisplayName = "OutboxMessage can't be created with whitespaces body.")]
     [Trait("Category", "Unit")]
     public void CantCreateOutboxMessageTestsWithWhitespacesBody()
     {

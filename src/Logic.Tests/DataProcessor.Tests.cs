@@ -21,10 +21,10 @@ public class DataProcessorTests
 
         // Arrange
         var uow = (IProcessingDataUnitOfWork)null!;
-        var ilogger = new Mock<ILogger<DataProcessor>>();
+        var logger = new Mock<ILogger<DataProcessor>>();
 
         // Act
-        var exception = Record.Exception(() => new DataProcessor(uow, ilogger.Object));
+        var exception = Record.Exception(() => new DataProcessor(uow, logger.Object));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -37,10 +37,10 @@ public class DataProcessorTests
 
         // Arrange
         var uow = new Mock<IProcessingDataUnitOfWork>();
-        var ilogger = (ILogger<DataProcessor>)null!;
+        var logger = (ILogger<DataProcessor>)null!;
 
         // Act
-        var exception = Record.Exception(() => new DataProcessor(uow.Object, ilogger));
+        var exception = Record.Exception(() => new DataProcessor(uow.Object, logger));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -53,10 +53,10 @@ public class DataProcessorTests
 
         // Arrange
         var uow = new Mock<IProcessingDataUnitOfWork>();
-        var ilogger = new Mock<ILogger<DataProcessor>>();
+        var logger = new Mock<ILogger<DataProcessor>>();
 
         // Act
-        var exception = Record.Exception(() => new DataProcessor(uow.Object, ilogger.Object));
+        var exception = Record.Exception(() => new DataProcessor(uow.Object, logger.Object));
 
         // Assert
         object p = exception.Should().BeNull();
@@ -69,9 +69,9 @@ public class DataProcessorTests
     {
         // Arrange
         var uow = new Mock<IProcessingDataUnitOfWork>();
-        var ilogger = new Mock<ILogger<DataProcessor>>();
+        var logger = new Mock<ILogger<DataProcessor>>();
         var data = (IProcessingData)null!;
-        var p = new DataProcessor(uow.Object, ilogger.Object);
+        var p = new DataProcessor(uow.Object, logger.Object);
 
         // Act
         var exception = await Record.ExceptionAsync(async () => await p.ProcessDataAsync(data, CancellationToken.None));
@@ -86,14 +86,14 @@ public class DataProcessorTests
     public async Task CanProcessData()
     {
         // Arrange
-        var ilogger = new Mock<ILogger<DataProcessor>>();
+        var logger = new Mock<ILogger<DataProcessor>>();
         var data = new Mock<IProcessingData>(); 
-        var token = new CancellationTokenSource();
+        using var token = new CancellationTokenSource();
         var uow = new Mock<IProcessingDataUnitOfWork>();
         int callOrder = 0;
         uow.Setup(x => x.ProcessDataAsync(data.Object, token.Token)).Callback(() => callOrder++.Should().Be(0));
         uow.Setup(x => x.SaveAsync(token.Token)).Callback(() => callOrder++.Should().Be(1));
-        var p = new DataProcessor(uow.Object, ilogger.Object);
+        var p = new DataProcessor(uow.Object, logger.Object);
 
         // Act
         var exception = await Record.ExceptionAsync(async () => await p.ProcessDataAsync(data.Object, token.Token));

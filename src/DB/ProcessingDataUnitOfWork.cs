@@ -30,10 +30,7 @@ public class ProcessingDataUnitOfWork : UnitOfWork<OutboxContext>, IProcessingDa
     /// <inheritdoc/>
     public async Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default)
     {
-        if (data is null)
-        {
-            throw new ArgumentNullException(nameof(data));
-        }
+        ArgumentNullException.ThrowIfNull(data);
 
         ThrowIfDisposed();
 

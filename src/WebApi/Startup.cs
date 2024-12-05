@@ -10,13 +10,8 @@ using Serilog;
 
 namespace WebApi;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-    public Startup(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IDataProcessor, DataProcessor>();
@@ -54,5 +49,5 @@ public class Startup
         });
     }
 
-    private readonly IConfiguration _configuration;
+    private readonly IConfiguration _configuration = configuration;
 }

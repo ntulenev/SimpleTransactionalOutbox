@@ -77,9 +77,7 @@ public abstract class UnitOfWork<TContext> :
 
         _logger.LogInformation("Instance disposed");
 
-#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
         GC.SuppressFinalize(this);
-#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
     }
 
     /// <inheritdoc/>
@@ -115,10 +113,7 @@ public abstract class UnitOfWork<TContext> :
 
     protected void ThrowIfDisposed()
     {
-        if (_isDisposed)
-        {
-            throw new ObjectDisposedException(GetType().FullName);
-        }
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
     }
 
     protected virtual void Dispose(bool disposing)

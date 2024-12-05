@@ -12,6 +12,6 @@ public interface IOutboxMessageProcessor
     /// </summary>
     /// <param name="message">Outbox message for processing.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Status of operation (true if success, false othervise).</returns>
+    /// <returns>Status of operation (true if success, false otherwise).</returns>
     Task<bool> TryProcessAsync(IOutboxMessage message, CancellationToken cancellationToken = default);
 }

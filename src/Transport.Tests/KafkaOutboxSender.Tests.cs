@@ -136,7 +136,7 @@ public class KafkaOutboxSenderTests
         options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = "A" });
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
         var sender = new KafkaOutboxSender(producer.Object, serializer.Object, options.Object, logger.Object);
-        var token = new CancellationTokenSource();
+        using var token = new CancellationTokenSource();
 
         // Act
         var exception = await Record.ExceptionAsync(async () => await sender.SendAsync(null!, token.Token));
@@ -158,7 +158,7 @@ public class KafkaOutboxSenderTests
         options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = topicName });
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
         var sender = new KafkaOutboxSender(producer.Object, serializer.Object, options.Object, logger.Object);
-        var token = new CancellationTokenSource();
+        using var token = new CancellationTokenSource();
         var message = new Mock<IOutboxMessage>();
 
         var jsonStr = "test";

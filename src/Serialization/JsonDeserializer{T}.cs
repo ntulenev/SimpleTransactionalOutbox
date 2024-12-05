@@ -13,10 +13,7 @@ public class JsonDeserializer<T> : IDeserializer<T>
     /// <inheritdoc/>
     public T Deserialize(string obj)
     {
-        if (obj is null)
-        {
-            throw new ArgumentNullException(nameof(obj));
-        }
+        ArgumentNullException.ThrowIfNull(obj);
 
         if (string.IsNullOrWhiteSpace(obj))
         {

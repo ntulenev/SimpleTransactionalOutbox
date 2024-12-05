@@ -22,10 +22,10 @@ public class OutboxTests
         // Arrange
         var fetcher = (IOutboxFetcher)null!;
         var scopedFactory = new Mock<IServiceScopeFactory>();
-        var ilogger = new Mock<ILogger<Outbox>>();
+        var logger = new Mock<ILogger<Outbox>>();
 
         // Act
-        var exception = Record.Exception(() => new Outbox(fetcher, scopedFactory.Object, ilogger.Object));
+        var exception = Record.Exception(() => new Outbox(fetcher, scopedFactory.Object, logger.Object));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -39,10 +39,10 @@ public class OutboxTests
         // Arrange
         var fetcher = new Mock<IOutboxFetcher>();
         var scopedFactory = (IServiceScopeFactory)null!;
-        var ilogger = new Mock<ILogger<Outbox>>();
+        var logger = new Mock<ILogger<Outbox>>();
 
         // Act
-        var exception = Record.Exception(() => new Outbox(fetcher.Object, scopedFactory, ilogger.Object));
+        var exception = Record.Exception(() => new Outbox(fetcher.Object, scopedFactory, logger.Object));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -55,10 +55,10 @@ public class OutboxTests
         // Arrange
         var fetcher = new Mock<IOutboxFetcher>();
         var scopedFactory = new Mock<IServiceScopeFactory>();
-        var ilogger = (ILogger<Outbox>)null!;
+        var logger = (ILogger<Outbox>)null!;
 
         // Act
-        var exception = Record.Exception(() => new Outbox(fetcher.Object, scopedFactory.Object, ilogger));
+        var exception = Record.Exception(() => new Outbox(fetcher.Object, scopedFactory.Object, logger));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -71,10 +71,10 @@ public class OutboxTests
         // Arrange
         var fetcher = new Mock<IOutboxFetcher>();
         var scopedFactory = new Mock<IServiceScopeFactory>();
-        var ilogger = new Mock<ILogger<Outbox>>();
+        var logger = new Mock<ILogger<Outbox>>();
 
         // Act
-        var exception = Record.Exception(() => new Outbox(fetcher.Object, scopedFactory.Object, ilogger.Object));
+        var exception = Record.Exception(() => new Outbox(fetcher.Object, scopedFactory.Object, logger.Object));
 
         // Assert
         exception.Should().BeNull();
@@ -87,12 +87,12 @@ public class OutboxTests
         // Arrange
         var fetcher = new Mock<IOutboxFetcher>();
         var scopedFactory = new Mock<IServiceScopeFactory>();
-        var ilogger = new Mock<ILogger<Outbox>>();
-        var outBox = new Outbox(fetcher.Object, scopedFactory.Object, ilogger.Object);
-        var tokenSource = new CancellationTokenSource();
+        var logger = new Mock<ILogger<Outbox>>();
+        var outBox = new Outbox(fetcher.Object, scopedFactory.Object, logger.Object);
+        using var tokenSource = new CancellationTokenSource();
 
         var msg = new TestMessage();
-        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync(new[] { msg });
+        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync([msg]);
         var scope = new Mock<IServiceScope>();
         scopedFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
         var provider = new Mock<IServiceProvider>();

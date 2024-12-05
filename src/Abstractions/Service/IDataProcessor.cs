@@ -3,7 +3,7 @@
 namespace Abstractions.Service;
 
 /// <summary>
-/// Processor for incomming data message.
+/// Processor for incoming data message.
 /// </summary>
 public interface IDataProcessor
 {

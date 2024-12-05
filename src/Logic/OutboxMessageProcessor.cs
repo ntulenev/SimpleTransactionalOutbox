@@ -31,10 +31,7 @@ public class OutboxMessageProcessor : IOutboxMessageProcessor
     /// <inheritdoc/>
     public async Task<bool> TryProcessAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
     {
-        if (message is null)
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
+        ArgumentNullException.ThrowIfNull(message);
 
         using var scope = _logger.BeginScope("Processing outbox message {@message}.", message);
 

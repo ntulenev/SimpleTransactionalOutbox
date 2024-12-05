@@ -41,13 +41,14 @@ public class KafkaOutboxSenderOptionsValidation : IValidateOptions<KafkaOutboxSe
 
         if (!_topicNameCharacters.IsMatch(options.TopicName))
         {
-            return ValidateOptionsResult.Fail($"{nameof(options.TopicName)} may consist of characters 'a' to 'z', 'A' to 'Z', digits, and minus signs.");
+            return ValidateOptionsResult.Fail($"{nameof(options.TopicName)} " +
+                $"may consist of characters 'a' to 'z', 'A' to 'Z', digits, and minus signs.");
         }
 
         return ValidateOptionsResult.Success;
     }
 
-    private static readonly Regex _topicNameCharacters = new Regex(
+    private static readonly Regex _topicNameCharacters = new(
         "^[a-zA-Z0-9\\-]*$",
         RegexOptions.Compiled);
 

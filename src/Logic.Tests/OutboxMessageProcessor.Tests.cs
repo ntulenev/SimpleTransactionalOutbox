@@ -22,10 +22,10 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = (IOutboxUnitOfWork)null!;
         var sender = new Mock<IOutboxSender>();
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessageProcessor(uow, sender.Object, ilogger.Object));
+        var exception = Record.Exception(() => new OutboxMessageProcessor(uow, sender.Object, logger.Object));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -39,10 +39,10 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = (IOutboxSender)null!;
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessageProcessor(uow.Object, sender, ilogger.Object));
+        var exception = Record.Exception(() => new OutboxMessageProcessor(uow.Object, sender, logger.Object));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -56,10 +56,10 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = new Mock<IOutboxSender>();
-        var ilogger = (ILogger<OutboxMessageProcessor>)null!;
+        var logger = (ILogger<OutboxMessageProcessor>)null!;
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessageProcessor(uow.Object, sender.Object, ilogger));
+        var exception = Record.Exception(() => new OutboxMessageProcessor(uow.Object, sender.Object, logger));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -73,10 +73,10 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = new Mock<IOutboxSender>();
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessageProcessor(uow.Object, sender.Object, ilogger.Object));
+        var exception = Record.Exception(() => new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object));
 
         // Assert
         exception.Should().BeNull();
@@ -90,9 +90,9 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = new Mock<IOutboxSender>();
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
-        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, ilogger.Object);
-        var cts = new CancellationTokenSource();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
+        using var cts = new CancellationTokenSource();
         IOutboxMessage message = null!;
 
         // Act
@@ -110,9 +110,9 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = new Mock<IOutboxSender>();
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
-        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, ilogger.Object);
-        var cts = new CancellationTokenSource();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
+        using var cts = new CancellationTokenSource();
         var message = new Mock<IOutboxMessage>();
 
         sender.Setup(x => x.SendAsync(message.Object, cts.Token)).ThrowsAsync(new Exception());
@@ -135,9 +135,9 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = new Mock<IOutboxSender>();
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
-        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, ilogger.Object);
-        var cts = new CancellationTokenSource();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
+        using var cts = new CancellationTokenSource();
         var message = new Mock<IOutboxMessage>();
 
         uow.Setup(x => x.RemoveOutboxMessageAsync(message.Object, cts.Token)).ThrowsAsync(new Exception());
@@ -161,9 +161,9 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = new Mock<IOutboxSender>();
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
-        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, ilogger.Object);
-        var cts = new CancellationTokenSource();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
+        using var cts = new CancellationTokenSource();
         var message = new Mock<IOutboxMessage>();
 
         uow.Setup(x => x.SaveAsync(cts.Token)).ThrowsAsync(new Exception());
@@ -186,9 +186,9 @@ public class OutboxMessageProcessorTests
         // Arrange
         var uow = new Mock<IOutboxUnitOfWork>();
         var sender = new Mock<IOutboxSender>();
-        var ilogger = new Mock<ILogger<OutboxMessageProcessor>>();
-        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, ilogger.Object);
-        var cts = new CancellationTokenSource();
+        var logger = new Mock<ILogger<OutboxMessageProcessor>>();
+        var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
+        using var cts = new CancellationTokenSource();
         var message = new Mock<IOutboxMessage>();
 
         int callOrder = 0;

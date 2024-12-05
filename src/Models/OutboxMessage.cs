@@ -30,10 +30,7 @@ public class OutboxMessage : IOutboxMessage
     /// <param name="body">Message body.</param>
     public OutboxMessage(Guid messageId, DateTime occurredOn, OutboxMessageType type, string body)
     {
-        if (body is null)
-        {
-            throw new ArgumentNullException(nameof(body));
-        }
+        ArgumentNullException.ThrowIfNull(body);
 
         if (string.IsNullOrWhiteSpace(body))
         {
