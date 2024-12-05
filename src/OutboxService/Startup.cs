@@ -15,6 +15,7 @@ using OutboxService.Services;
 using OutboxService.Validation;
 
 using AS = Abstractions.Serialization;
+using Serilog;
 
 namespace OutboxService;
 
@@ -28,6 +29,16 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbContext<OutboxContext>(options => options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
+
+        var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(_configuration)
+                .CreateLogger();
+
+        services.AddLogging(x =>
+        {
+            x.SetMinimumLevel(LogLevel.Information);
+            x.AddSerilog(logger: logger, dispose: true);
+        });
 
         services.AddScoped<IOutbox, Outbox>();
         services.AddScoped<IOutboxFetcher, OutboxFetcher>();

@@ -5,9 +5,7 @@ using WebApi;
 var host = Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>()
-                      .UseSerilog((hostingContext, loggerConfiguration)
-                            => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+                    webBuilder.UseStartup<Startup>();
                 });
 
 var app = host.Build();

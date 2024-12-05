@@ -12,7 +12,7 @@ public class KafkaOutboxSenderOptionsValidation : IValidateOptions<KafkaOutboxSe
     /// <summary>
     /// Validates configuration.
     /// </summary>
-    public ValidateOptionsResult Validate(string name, KafkaOutboxSenderOptions options)
+    public ValidateOptionsResult Validate(string? name, KafkaOutboxSenderOptions options)
     {
         if (options is null)
         {
