@@ -72,7 +72,7 @@ public class ProcessDataController : ControllerBase
         return System.Web.HttpUtility.UrlDecode(body);
     }
 
-    private readonly ILogger<ProcessDataController> _logger;
+    private readonly ILogger _logger;
     private readonly IDataProcessor _service;
     private readonly IDeserializer<ProcessingData> _deserializer;
     private readonly IHostApplicationLifetime _applicationLifetime;
