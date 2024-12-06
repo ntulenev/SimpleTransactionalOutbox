@@ -13,10 +13,7 @@ public class JsonSerializer<T> : ISerializer<T>
     /// <inheritdoc/>
     public string Serialize(T obj)
     {
-        if (obj is null)
-        {
-            throw new ArgumentNullException(nameof(obj));
-        }
+        ArgumentNullException.ThrowIfNull(obj);
 
         return JsonConvert.SerializeObject(obj);
     }
