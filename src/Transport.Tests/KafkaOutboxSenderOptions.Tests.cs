@@ -12,25 +12,9 @@ public class KafkaOutboxSenderOptionsTests
     {
 
         // Act
-        var exception = Record.Exception(() => new KafkaOutboxSenderOptions());
+        var exception = Record.Exception(() => new KafkaOutboxSenderOptions() { TopicName = null! });
 
         // Assert
         exception.Should().BeNull();
-    }
-
-    [Fact(DisplayName = "KafkaOutboxSenderOptions can get an set topic name.")]
-    [Trait("Category", "Unit")]
-    public void CanGetAndSetTopicName()
-    {
-        // Arrange
-        var topicName = "data";
-        var options = new KafkaOutboxSenderOptions();
-
-        // Act
-        var exception = Record.Exception(() => options.TopicName = topicName);
-
-        // Assert
-        exception.Should().BeNull();
-        options.TopicName.Should().Be(topicName);
     }
 }
