@@ -8,5 +8,5 @@ public class KafkaOutboxSenderOptions
     /// <summary>
     /// Kafka topic name.
     /// </summary>
-    public string TopicName { get; set; } = default!;
+    public required string TopicName { get; init; }
 }
