@@ -45,7 +45,10 @@ public class KafkaOutboxSenderOptionsValidationTests
 	{
 		// Assert
 		var validator = new KafkaOutboxSenderOptionsValidation();
-		var options = new KafkaOutboxSenderOptions();
+		var options = new KafkaOutboxSenderOptions()
+		{ 
+			TopicName = null! 
+		};
 
 		// Act
 		ValidateOptionsResult result = null!;
