@@ -68,6 +68,6 @@ public class KafkaOutboxSender : IOutboxSender
 
     private readonly string _topicName;
     private readonly IProducer<Null, string> _producer;
-    private readonly ILogger<KafkaOutboxSender> _logger;
+    private readonly ILogger _logger;
     private readonly AS.ISerializer<IOutboxMessage> _serializer;
 }
