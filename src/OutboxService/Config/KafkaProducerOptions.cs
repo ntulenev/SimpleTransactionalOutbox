@@ -8,5 +8,5 @@ public class KafkaProducerOptions
     /// <summary>
     /// List of Kafka bootstrap servers.
     /// </summary>
-    public List<string>? BootstrapServers { get; set; }
+    public required List<string> BootstrapServers { get; init; }
 }
