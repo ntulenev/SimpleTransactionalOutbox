@@ -66,7 +66,7 @@ public class OutboxHostedService : BackgroundService
     }
 
     private readonly TimeSpan _delay;
-    private readonly ILogger<OutboxHostedService> _logger;
+    private readonly ILogger _logger;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 }
