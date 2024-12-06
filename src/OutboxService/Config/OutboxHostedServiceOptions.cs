@@ -8,5 +8,5 @@ public class OutboxHostedServiceOptions
     /// <summary>
     /// Starting interval.
     /// </summary>
-    public TimeSpan Delay { get; set; }
+    public required TimeSpan Delay { get; init; }
 }
