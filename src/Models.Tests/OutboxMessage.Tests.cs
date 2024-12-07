@@ -17,7 +17,11 @@ public class OutboxMessageTests
         string body = null!;
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessage(Guid.NewGuid(), DateTime.UtcNow, Abstractions.Models.OutboxMessageType.ProcessingDataMessage, body));
+        var exception = Record.Exception(
+            () => new OutboxMessage(Guid.NewGuid(), 
+                                    DateTime.UtcNow, 
+                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage, 
+                                    body));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -31,7 +35,11 @@ public class OutboxMessageTests
         string body = string.Empty;
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessage(Guid.NewGuid(), DateTime.UtcNow, Abstractions.Models.OutboxMessageType.ProcessingDataMessage, body));
+        var exception = Record.Exception(
+            () => new OutboxMessage(Guid.NewGuid(), 
+                                    DateTime.UtcNow, 
+                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage, 
+                                    body));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
@@ -45,7 +53,11 @@ public class OutboxMessageTests
         string body = "  ";
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessage(Guid.NewGuid(), DateTime.UtcNow, Abstractions.Models.OutboxMessageType.ProcessingDataMessage, body));
+        var exception = Record.Exception(
+            () => new OutboxMessage(Guid.NewGuid(), 
+                                    DateTime.UtcNow, 
+                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage, 
+                                    body));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
@@ -60,7 +72,11 @@ public class OutboxMessageTests
         int messageType = int.MaxValue;
 
         // Act
-        var exception = Record.Exception(() => new OutboxMessage(Guid.NewGuid(), DateTime.UtcNow, (Abstractions.Models.OutboxMessageType)messageType, body));
+        var exception = Record.Exception(
+            () => new OutboxMessage(Guid.NewGuid(), 
+                                    DateTime.UtcNow, 
+                                    (Abstractions.Models.OutboxMessageType)messageType, 
+                                    body));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<InvalidEnumArgumentException>();
