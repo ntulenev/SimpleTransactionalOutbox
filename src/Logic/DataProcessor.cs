@@ -41,5 +41,5 @@ public class DataProcessor : IDataProcessor
     }
 
     private readonly IProcessingDataUnitOfWork _uow;
-    private readonly ILogger<DataProcessor> _logger;
+    private readonly ILogger _logger;
 }

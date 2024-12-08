@@ -51,6 +51,6 @@ public class Outbox : IOutbox
 
     private readonly IOutboxFetcher _fetcher;
     private readonly IServiceScopeFactory _scopedFactory;
-    private readonly ILogger<Outbox> _logger;
+    private readonly ILogger _logger;
 
 }

@@ -57,5 +57,5 @@ public class OutboxMessageProcessor : IOutboxMessageProcessor
 
     private readonly IOutboxUnitOfWork _uow;
     private readonly IOutboxSender _sender;
-    private readonly ILogger<OutboxMessageProcessor> _logger;
+    private readonly ILogger _logger;
 }
