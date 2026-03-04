@@ -1,0 +1,44 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="Abstractions/Abstractions.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="DB.Tests/DB.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="DB/DB.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Logic.Tests/Logic.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Logic/Logic.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Models.Tests/Models.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Models/Models.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="OutboxService/OutboxService.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Serialization.Tests/Serialization.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Serialization/Serialization.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Transport.Tests/Transport.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Transport/Transport.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="WebApi/WebApi.csproj">
+    <Platform Project="x64" />
+  </Project>
+</Solution>

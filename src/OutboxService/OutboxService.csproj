@@ -8,6 +8,10 @@
     <Platform>x64</Platform>
     <Platforms>x64</Platforms>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>CA1002,CA1515,CA1848,CA1860,CS1591,IDE0005,IDE0053,IDE0058,IDE0060</NoWarn>
+  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />

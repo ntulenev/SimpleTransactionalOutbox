@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Abstractions.Bus;
+using Abstractions.Models;
 
 using Confluent.Kafka;
 
-using Abstractions.Bus;
-using Abstractions.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using AS = Abstractions.Serialization;
 

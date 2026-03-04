@@ -1,4 +1,4 @@
-﻿using Abstractions.Models;
+using Abstractions.Models;
 
 namespace Logic.Tests;
 

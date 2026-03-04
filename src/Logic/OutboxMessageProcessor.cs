@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-
 using Abstractions.Bus;
 using Abstractions.DB;
 using Abstractions.Models;
 using Abstractions.Service;
+
+using Microsoft.Extensions.Logging;
 
 namespace Logic;
 

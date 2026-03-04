@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-
 using Abstractions.DB;
 using Abstractions.Models;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace DB;
 

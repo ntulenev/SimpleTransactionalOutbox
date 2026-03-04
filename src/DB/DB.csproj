@@ -10,6 +10,10 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>CA1012,CA1051,CA1063,CA1508,CA1727,CA1848,CA1873,CS1591,IDE0022,IDE0036,IDE0058</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
 	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />   
 	<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />

@@ -1,11 +1,15 @@
-using Microsoft.EntityFrameworkCore;
-
 using Abstractions.DB;
 using Abstractions.Serialization;
 using Abstractions.Service;
+
 using DB;
+
 using Logic;
+
+using Microsoft.EntityFrameworkCore;
+
 using Serialization;
+
 using Serilog;
 
 namespace WebApi;
@@ -19,7 +23,7 @@ public class Startup(IConfiguration configuration)
 
         services.AddSingleton(typeof(IDeserializer<>), typeof(JsonDeserializer<>));
         services.AddSingleton(typeof(ISerializer<>), typeof(JsonSerializer<>));
-        
+
         services.AddDbContext<OutboxContext>(options => options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
 
         var logger = new LoggerConfiguration()

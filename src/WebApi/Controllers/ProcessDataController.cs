@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
 using Abstractions.Serialization;
 using Abstractions.Service;
+
+using Microsoft.AspNetCore.Mvc;
 
 using Models;
 

@@ -10,6 +10,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>CS1591,IDE0007,IDE0058</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.0.0-alpha.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />

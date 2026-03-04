@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-
 using Abstractions.Serialization;
+
+using Newtonsoft.Json;
 
 namespace Serialization;
 

@@ -1,4 +1,4 @@
-﻿namespace Abstractions.Service;
+namespace Abstractions.Service;
 
 /// <summary>
 /// Outbox service interface.
@@ -9,5 +9,5 @@ public interface IOutbox
     /// Processes outbox work phase.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    public Task RunProcessingAsync(CancellationToken cancellationToken);
+    Task RunProcessingAsync(CancellationToken cancellationToken);
 }

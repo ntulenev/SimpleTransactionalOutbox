@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using FluentAssertions.Json;
 
 using Newtonsoft.Json.Linq;

@@ -10,4 +10,8 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>CS1591</NoWarn>
+  </PropertyGroup>
+
 </Project>

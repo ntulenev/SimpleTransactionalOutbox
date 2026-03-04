@@ -1,4 +1,4 @@
-﻿namespace DB;
+namespace DB;
 
 /// <summary>
 /// DB Processing data model.

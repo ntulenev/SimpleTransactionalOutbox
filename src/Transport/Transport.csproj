@@ -10,6 +10,10 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>CA1727,CA1848,CA1873,IDE0200,SYSLIB1045</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="2.6.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />

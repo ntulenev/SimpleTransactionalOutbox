@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 using FluentAssertions;
 
@@ -18,9 +18,9 @@ public class OutboxMessageTests
 
         // Act
         var exception = Record.Exception(
-            () => new OutboxMessage(Guid.NewGuid(), 
-                                    DateTime.UtcNow, 
-                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage, 
+            () => new OutboxMessage(Guid.NewGuid(),
+                                    DateTime.UtcNow,
+                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
                                     body));
 
         // Assert
@@ -36,9 +36,9 @@ public class OutboxMessageTests
 
         // Act
         var exception = Record.Exception(
-            () => new OutboxMessage(Guid.NewGuid(), 
-                                    DateTime.UtcNow, 
-                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage, 
+            () => new OutboxMessage(Guid.NewGuid(),
+                                    DateTime.UtcNow,
+                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
                                     body));
 
         // Assert
@@ -54,9 +54,9 @@ public class OutboxMessageTests
 
         // Act
         var exception = Record.Exception(
-            () => new OutboxMessage(Guid.NewGuid(), 
-                                    DateTime.UtcNow, 
-                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage, 
+            () => new OutboxMessage(Guid.NewGuid(),
+                                    DateTime.UtcNow,
+                                    Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
                                     body));
 
         // Assert
@@ -73,9 +73,9 @@ public class OutboxMessageTests
 
         // Act
         var exception = Record.Exception(
-            () => new OutboxMessage(Guid.NewGuid(), 
-                                    DateTime.UtcNow, 
-                                    (Abstractions.Models.OutboxMessageType)messageType, 
+            () => new OutboxMessage(Guid.NewGuid(),
+                                    DateTime.UtcNow,
+                                    (Abstractions.Models.OutboxMessageType)messageType,
                                     body));
 
         // Assert

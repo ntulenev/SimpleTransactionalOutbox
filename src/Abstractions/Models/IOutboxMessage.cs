@@ -1,4 +1,4 @@
-﻿namespace Abstractions.Models;
+namespace Abstractions.Models;
 
 /// <summary>
 /// Outbox message interface.
@@ -8,22 +8,22 @@ public interface IOutboxMessage
     /// <summary>
     /// Id of the message.
     /// </summary>
-    public Guid MessageId { get; }
+    Guid MessageId { get; }
 
     /// <summary>
     /// Creation date/time.
     /// </summary>
-    public DateTime OccurredOn { get; }
+    DateTime OccurredOn { get; }
 
     /// <summary>
     /// Type of outbox message.
     /// </summary>
-    public OutboxMessageType MessageType { get; }
+    OutboxMessageType MessageType { get; }
 
     /// <summary>
     /// Message body.
     /// </summary>
-    public string Body { get; }  
+    string Body { get; }
 }
 
 

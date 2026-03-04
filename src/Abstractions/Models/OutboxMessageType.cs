@@ -1,4 +1,4 @@
-﻿namespace Abstractions.Models;
+namespace Abstractions.Models;
 
 /// <summary>
 /// Type of the outbox message.

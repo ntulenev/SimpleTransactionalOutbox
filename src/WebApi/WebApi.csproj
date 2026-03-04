@@ -9,6 +9,10 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>CA1515,CA1848,CA2007,CS1591,IDE0005,IDE0053,IDE0058,IDE0060</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
     <ProjectReference Include="..\DB\DB.csproj" />

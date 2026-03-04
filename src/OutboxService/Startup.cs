@@ -1,21 +1,28 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-
 using Abstractions.Bus;
 using Abstractions.DB;
 using Abstractions.Service;
+
 using Confluent.Kafka;
+
 using DB;
+
 using Logic;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
 using OutboxService.Config;
-using Serialization;
-using Transport;
-using Transport.Validation;
 using OutboxService.Services;
 using OutboxService.Validation;
 
-using AS = Abstractions.Serialization;
+using Serialization;
+
 using Serilog;
+
+using Transport;
+using Transport.Validation;
+
+using AS = Abstractions.Serialization;
 
 namespace OutboxService;
 

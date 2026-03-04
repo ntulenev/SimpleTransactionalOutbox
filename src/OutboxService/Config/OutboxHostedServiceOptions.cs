@@ -1,4 +1,4 @@
-﻿namespace OutboxService.Config;
+namespace OutboxService.Config;
 
 /// <summary>
 /// Options for Outbox service.

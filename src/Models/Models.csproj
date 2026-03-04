@@ -9,6 +9,10 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>CA2263</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Abstractions\Abstractions.csproj" />
   </ItemGroup>

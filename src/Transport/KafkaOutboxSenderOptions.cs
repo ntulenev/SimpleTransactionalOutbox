@@ -1,4 +1,4 @@
-﻿namespace Transport;
+namespace Transport;
 
 /// <summary>
 /// Config options for Kafka sender.

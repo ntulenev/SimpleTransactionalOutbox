@@ -1,4 +1,4 @@
-﻿namespace Abstractions.Models;
+namespace Abstractions.Models;
 
 /// <summary>
 /// Data model interface.
@@ -8,10 +8,10 @@ public interface IProcessingData
     /// <summary>
     /// Id of the processing data.
     /// </summary>
-    public long Id { get; }
+    long Id { get; }
 
     /// <summary>
     /// Value of the processing data.
     /// </summary>
-    public int Value { get; }
+    int Value { get; }
 }

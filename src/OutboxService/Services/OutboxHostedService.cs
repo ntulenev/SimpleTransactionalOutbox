@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
+
+using Abstractions.Service;
 
 using Microsoft.Extensions.Options;
 
-using Abstractions.Service;
 using OutboxService.Config;
 
 namespace OutboxService.Services;

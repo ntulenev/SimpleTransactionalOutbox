@@ -1,4 +1,6 @@
-﻿using Xunit;
+using Abstractions.Bus;
+using Abstractions.DB;
+using Abstractions.Models;
 
 using FluentAssertions;
 
@@ -6,9 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using Moq;
 
-using Abstractions.DB;
-using Abstractions.Bus;
-using Abstractions.Models;
+using Xunit;
 
 namespace Logic.Tests;
 

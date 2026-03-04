@@ -1,4 +1,4 @@
-﻿namespace Abstractions.Serialization;
+namespace Abstractions.Serialization;
 
 /// <summary>
 /// Deserializer string to model representation.
@@ -11,5 +11,5 @@ public interface IDeserializer<T>
     /// </summary>
     /// <param name="obj">Data in string format.</param>
     /// <returns>Deserialized model.</returns>
-    public T Deserialize(string obj);
+    T Deserialize(string obj);
 }

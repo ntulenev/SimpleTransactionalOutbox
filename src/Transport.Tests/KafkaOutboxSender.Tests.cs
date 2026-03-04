@@ -1,4 +1,8 @@
-﻿using Confluent.Kafka;
+using Abstractions.Models;
+
+using Confluent.Kafka;
+
+using FluentAssertions;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -6,10 +10,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 
 using Xunit;
-
-using Abstractions.Models;
-
-using FluentAssertions;
 
 namespace Transport.Tests;
 

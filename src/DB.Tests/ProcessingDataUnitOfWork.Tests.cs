@@ -1,15 +1,15 @@
-﻿using Xunit;
+using Abstractions.Models;
+using Abstractions.Serialization;
 
 using FluentAssertions;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using Moq;
 
-using Abstractions.Models;
-using Abstractions.Serialization;
+using Xunit;
 
 namespace DB.Tests;
 

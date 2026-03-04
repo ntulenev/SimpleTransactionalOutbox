@@ -1,4 +1,5 @@
-﻿using Xunit;
+using Abstractions.DB;
+using Abstractions.Models;
 
 using FluentAssertions;
 
@@ -6,8 +7,7 @@ using Microsoft.Extensions.Logging;
 
 using Moq;
 
-using Abstractions.DB;
-using Abstractions.Models;
+using Xunit;
 
 
 namespace Logic.Tests;
@@ -87,7 +87,7 @@ public class DataProcessorTests
     {
         // Arrange
         var logger = new Mock<ILogger<DataProcessor>>();
-        var data = new Mock<IProcessingData>(); 
+        var data = new Mock<IProcessingData>();
         using var token = new CancellationTokenSource();
         var uow = new Mock<IProcessingDataUnitOfWork>();
         int callOrder = 0;

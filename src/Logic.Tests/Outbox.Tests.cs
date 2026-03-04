@@ -1,14 +1,14 @@
-﻿using Xunit;
+using Abstractions.DB;
+using Abstractions.Service;
 
 using FluentAssertions;
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Moq;
 
-using Abstractions.DB;
-using Abstractions.Service;
+using Xunit;
 
 namespace Logic.Tests;
 

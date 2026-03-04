@@ -1,11 +1,11 @@
-﻿using Xunit;
+using Abstractions.Models;
 
 using FluentAssertions;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
-using Abstractions.Models;
+using Xunit;
 
 namespace DB.Tests;
 
