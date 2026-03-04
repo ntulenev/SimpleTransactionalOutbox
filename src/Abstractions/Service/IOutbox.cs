@@ -9,5 +9,9 @@ public interface IOutbox
     /// Processes outbox work phase.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task RunProcessingAsync(CancellationToken cancellationToken);
+    /// <returns>
+    /// <see langword="true"/> when there were messages to process; otherwise
+    /// <see langword="false"/>.
+    /// </returns>
+    Task<bool> RunProcessingAsync(CancellationToken cancellationToken);
 }

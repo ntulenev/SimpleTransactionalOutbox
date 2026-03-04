@@ -2,10 +2,6 @@ using System.Diagnostics;
 
 using Abstractions.Service;
 
-using Microsoft.Extensions.Options;
-
-using OutboxService.Config;
-
 namespace OutboxService.Services;
 
 /// <summary>
@@ -18,55 +14,54 @@ public class OutboxHostedService : BackgroundService
     /// </summary>
     /// <param name="logger">Logger.</param>
     /// <param name="hostApplicationLifetime">Lifetime app param.</param>
-    /// <param name="options">Service configuration.</param>
     /// <param name="serviceScopeFactory">Factory that creates DI Scopes.</param>
+    /// <param name="delayProvider">Provider for idle polling delays.</param>
     public OutboxHostedService(ILogger<OutboxHostedService> logger,
                          IHostApplicationLifetime hostApplicationLifetime,
-                         IOptions<OutboxHostedServiceOptions> options,
-                         IServiceScopeFactory serviceScopeFactory)
+                         IServiceScopeFactory serviceScopeFactory,
+                         IOutboxBackoffDelayProvider delayProvider)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _hostApplicationLifetime = hostApplicationLifetime ?? throw new ArgumentNullException(nameof(hostApplicationLifetime));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-
-        ArgumentNullException.ThrowIfNull(options);
-
-        if (options.Value is null)
-        {
-            throw new ArgumentException("Options value is not set", nameof(options));
-        }
-
-        _delay = options.Value.Delay;
+        _delayProvider = delayProvider ?? throw new ArgumentNullException(nameof(delayProvider));
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        return Task.Run(async () =>
+        while (true)
         {
-            while (true)
+            try
             {
-                try
+                _hostApplicationLifetime.ApplicationStopping.ThrowIfCancellationRequested();
+
+                var processedAny = false;
+
+                using var scope = _serviceScopeFactory.CreateScope();
                 {
-                    _hostApplicationLifetime.ApplicationStopping.ThrowIfCancellationRequested();
-
-                    using var scope = _serviceScopeFactory.CreateScope();
-                    {
-                        var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
-                        await outbox.RunProcessingAsync(_hostApplicationLifetime.ApplicationStopping).ConfigureAwait(false);
-                    }
-
-                    await Task.Delay(_delay).ConfigureAwait(false);
+                    var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
+                    processedAny = await outbox.RunProcessingAsync(_hostApplicationLifetime.ApplicationStopping).ConfigureAwait(false);
                 }
-                catch (Exception ex) when (ex is not OperationCanceledException)
+
+                if (!processedAny)
                 {
-                    _logger.LogError(ex, "Error while processing outbox");
-                    throw;
+                    var delay = _delayProvider.GetNextDelay();
+                    await Task.Delay(delay, _hostApplicationLifetime.ApplicationStopping).ConfigureAwait(false);
+                }
+                else
+                {
+                    _delayProvider.Reset();
                 }
             }
-        }, _hostApplicationLifetime.ApplicationStopping);
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogError(ex, "Error while processing outbox");
+                throw;
+            }
+        }
     }
 
-    private readonly TimeSpan _delay;
+    private readonly IOutboxBackoffDelayProvider _delayProvider;
     private readonly ILogger _logger;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly IServiceScopeFactory _serviceScopeFactory;

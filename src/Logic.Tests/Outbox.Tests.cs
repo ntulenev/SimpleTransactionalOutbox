@@ -99,17 +99,40 @@ public class OutboxTests
         scope.Setup(x => x.ServiceProvider).Returns(provider.Object);
         var processor = new Mock<IOutboxMessageProcessor>();
         provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor))).Returns(processor.Object);
+        processor.Setup(x => x.TryProcessAsync(msg, tokenSource.Token)).ReturnsAsync(true);
 
         // Act
-        var exception = await Record.ExceptionAsync(async () => await outBox.RunProcessingAsync(tokenSource.Token));
+        var result = await outBox.RunProcessingAsync(tokenSource.Token);
 
         // Assert
-        exception.Should().BeNull();
+        result.Should().BeTrue();
         fetcher.Verify(x => x.ReadOutboxMessagesAsync(tokenSource.Token), Times.Once);
         scopedFactory.Verify(x => x.CreateScope(), Times.Once);
         scope.Verify(x => x.ServiceProvider, Times.Once);
         provider.Verify(x => x.GetService(typeof(IOutboxMessageProcessor)), Times.Once);
         processor.Verify(x => x.TryProcessAsync(msg, tokenSource.Token), Times.Once);
         scope.Verify(x => x.Dispose(), Times.Once);
+    }
+
+    [Fact(DisplayName = "Outbox returns false when there are no messages.")]
+    [Trait("Category", "Unit")]
+    public async Task RunProcessingAsyncReturnsFalseWhenNoMessagesAsync()
+    {
+        // Arrange
+        var fetcher = new Mock<IOutboxFetcher>();
+        var scopedFactory = new Mock<IServiceScopeFactory>();
+        var logger = new Mock<ILogger<Outbox>>();
+        var outBox = new Outbox(fetcher.Object, scopedFactory.Object, logger.Object);
+        using var tokenSource = new CancellationTokenSource();
+
+        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync([]);
+
+        // Act
+        var result = await outBox.RunProcessingAsync(tokenSource.Token);
+
+        // Assert
+        result.Should().BeFalse();
+        fetcher.Verify(x => x.ReadOutboxMessagesAsync(tokenSource.Token), Times.Once);
+        scopedFactory.Verify(x => x.CreateScope(), Times.Never);
     }
 }

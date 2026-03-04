@@ -44,6 +44,11 @@ public class Startup(IConfiguration configuration)
 
         services.AddScoped<IOutbox, Outbox>();
         services.AddScoped<IOutboxFetcher, OutboxFetcher>();
+        services.AddSingleton<IOutboxBackoffDelayProvider>(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<OutboxHostedServiceOptions>>().Value;
+            return new OutboxBackoffDelayProvider(options.MinDelay, options.MaxDelay, options.StepsCount);
+        });
 
         services.AddSingleton<IOutboxSender, KafkaOutboxSender>();
         services.AddSingleton(typeof(AS.ISerializer<>), typeof(JsonSerializer<>));

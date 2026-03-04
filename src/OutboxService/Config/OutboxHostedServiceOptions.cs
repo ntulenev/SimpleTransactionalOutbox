@@ -6,7 +6,17 @@ namespace OutboxService.Config;
 public class OutboxHostedServiceOptions
 {
     /// <summary>
-    /// Starting interval.
+    /// Minimum delay between polling attempts.
     /// </summary>
-    public required TimeSpan Delay { get; init; }
+    public TimeSpan MinDelay { get; init; } = TimeSpan.FromMilliseconds(10);
+
+    /// <summary>
+    /// Maximum delay between polling attempts.
+    /// </summary>
+    public TimeSpan MaxDelay { get; init; } = TimeSpan.FromMilliseconds(500);
+
+    /// <summary>
+    /// Number of empty polling attempts required to reach the maximum delay.
+    /// </summary>
+    public int StepsCount { get; init; } = 10;
 }

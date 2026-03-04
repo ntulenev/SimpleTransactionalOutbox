@@ -28,10 +28,11 @@ public class Outbox : IOutbox
     }
 
     /// <inheritdoc/>
-    public async Task RunProcessingAsync(CancellationToken cancellationToken)
+    public async Task<bool> RunProcessingAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Run fetching messages from outbox.");
-        var messages = await _fetcher.ReadOutboxMessagesAsync(cancellationToken);
+        var messages = await _fetcher.ReadOutboxMessagesAsync(cancellationToken).ConfigureAwait(false);
+        var hasMessages = messages.Count > 0;
 
         _logger.LogInformation("Messages count {count}.", messages.Count);
         foreach (var item in messages)
@@ -39,7 +40,7 @@ public class Outbox : IOutbox
             using var scope = _scopedFactory.CreateScope();
             var processor = scope.ServiceProvider.GetRequiredService<IOutboxMessageProcessor>();
 
-            if (!await processor.TryProcessAsync(item, cancellationToken))
+            if (!await processor.TryProcessAsync(item, cancellationToken).ConfigureAwait(false))
             {
                 _logger.LogWarning("Unable to process {@item}. Stopping processing and retry later.", item);
                 break;
@@ -47,6 +48,7 @@ public class Outbox : IOutbox
         }
 
         _logger.LogInformation("Finish processing messages.");
+        return hasMessages;
     }
 
     private readonly IOutboxFetcher _fetcher;
