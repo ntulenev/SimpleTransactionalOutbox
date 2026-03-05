@@ -26,6 +26,9 @@
   <Project Path="OutboxService/OutboxService.csproj">
     <Platform Project="x64" />
   </Project>
+  <Project Path="OutboxService.Tests/OutboxService.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
   <Project Path="Serialization.Tests/Serialization.Tests.csproj">
     <Platform Project="x64" />
   </Project>
@@ -39,6 +42,9 @@
     <Platform Project="x64" />
   </Project>
   <Project Path="WebApi/WebApi.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="WebApi.Tests/WebApi.Tests.csproj">
     <Platform Project="x64" />
   </Project>
 </Solution>
