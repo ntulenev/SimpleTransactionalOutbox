@@ -176,5 +176,31 @@ public class KafkaOutboxSenderTests
         serializer.Verify(x => x.Serialize(message.Object), Times.Once);
         producer.Verify(x => x.ProduceAsync(topicName, It.Is<Message<Null, string>>(x => x.Value == jsonStr), token.Token), Times.Once);
     }
+
+    [Fact(DisplayName = "KafkaOutboxSender rethrows produce exception from Kafka producer.")]
+    [Trait("Category", "Unit")]
+    public async Task SendAsyncRethrowsProduceExceptionAsync()
+    {
+        // Arrange
+        var topicName = "A";
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
+        options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = topicName });
+        var logger = new Mock<ILogger<KafkaOutboxSender>>();
+        var sender = new KafkaOutboxSender(producer.Object, serializer.Object, options.Object, logger.Object);
+        using var token = new CancellationTokenSource();
+        var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
+
+        serializer.Setup(x => x.Serialize(message.Object)).Returns("test");
+        producer.Setup(x => x.ProduceAsync(topicName, It.IsAny<Message<Null, string>>(), token.Token))
+            .ThrowsAsync(new ProduceException<Null, string>(new Error(ErrorCode.Local_Transport), null));
+
+        // Act
+        var exception = await Record.ExceptionAsync(async () => await sender.SendAsync(message.Object, token.Token));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ProduceException<Null, string>>();
+    }
 }
 
