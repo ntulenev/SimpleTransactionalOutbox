@@ -185,13 +185,13 @@ public class OutboxUnitOfWorkTests : IDisposable
         var msg1 = new OutboxMessage
         {
             Body = "test1",
-            MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
+            MessageType = OutboxMessageType.ProcessingDataMessage,
             OccurredOn = DateTime.UtcNow
         };
         var msg2 = new OutboxMessage
         {
             Body = "test2",
-            MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
+            MessageType = OutboxMessageType.ProcessingDataMessage,
             OccurredOn = DateTime.UtcNow.AddDays(1)
         };
         ctx.OutboxMessages.Add(msg1);
@@ -227,7 +227,7 @@ public class OutboxUnitOfWorkTests : IDisposable
         var msg = new OutboxMessage
         {
             Body = "test",
-            MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
+            MessageType = OutboxMessageType.ProcessingDataMessage,
             OccurredOn = DateTime.UtcNow
         };
         ctx.OutboxMessages.Add(msg);

@@ -90,7 +90,7 @@ public class OutboxFetcherTests : IDisposable
         ctx.OutboxMessages.AddRange(Enumerable.Range(0, 100).Select(x => new OutboxMessage
         {
             Body = x.ToString(),
-            MessageType = Abstractions.Models.OutboxMessageType.ProcessingDataMessage,
+            MessageType = OutboxMessageType.ProcessingDataMessage,
             OccurredOn = date.AddMinutes(x)
         }));
         ctx.SaveChanges();
@@ -109,7 +109,7 @@ public class OutboxFetcherTests : IDisposable
         foreach (var item in result)
         {
             item.Body.Should().Be($"{indexer}");
-            item.MessageType.Should().Be(Abstractions.Models.OutboxMessageType.ProcessingDataMessage);
+            item.MessageType.Should().Be(OutboxMessageType.ProcessingDataMessage);
             item.OccurredOn.Should().Be(date.AddMinutes(indexer));
             indexer++;
         }

@@ -25,7 +25,7 @@ public class OutboxMessage
     /// <summary>
     /// Message body.
     /// </summary>
-    public string Body { get; set; } = default!;
+    public required string Body { get; set; }
 
     /// <summary>
     /// Creates <see cref="OutboxMessage"/>.
