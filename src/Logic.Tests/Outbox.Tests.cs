@@ -136,5 +136,42 @@ public class OutboxTests
         fetcher.Verify(x => x.ReadOutboxMessagesAsync(tokenSource.Token), Times.Once);
         scopedFactory.Verify(x => x.CreateScope(), Times.Never);
     }
+
+    [Fact(DisplayName = "Outbox stops processing after first failed message and returns true.")]
+    [Trait("Category", "Unit")]
+    public async Task RunProcessingAsyncStopsOnFirstFailedMessageAsync()
+    {
+        // Arrange
+        var fetcher = new Mock<IOutboxFetcher>(MockBehavior.Strict);
+        var scopedFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
+        var logger = new Mock<ILogger<Outbox>>();
+        var outBox = new Outbox(fetcher.Object, scopedFactory.Object, logger.Object);
+        using var tokenSource = new CancellationTokenSource();
+
+        var msg1 = new TestMessage();
+        var msg2 = new TestMessage();
+        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync([msg1, msg2]);
+
+        var scope = new Mock<IServiceScope>(MockBehavior.Strict);
+        var provider = new Mock<IServiceProvider>(MockBehavior.Strict);
+        var processor = new Mock<IOutboxMessageProcessor>(MockBehavior.Strict);
+
+        scopedFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
+        scope.Setup(x => x.ServiceProvider).Returns(provider.Object);
+        scope.Setup(x => x.Dispose());
+        provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor))).Returns(processor.Object);
+        processor.Setup(x => x.TryProcessAsync(msg1, tokenSource.Token)).ReturnsAsync(false);
+
+        // Act
+        var result = await outBox.RunProcessingAsync(tokenSource.Token);
+
+        // Assert
+        result.Should().BeTrue();
+        fetcher.Verify(x => x.ReadOutboxMessagesAsync(tokenSource.Token), Times.Once);
+        scopedFactory.Verify(x => x.CreateScope(), Times.Once);
+        processor.Verify(x => x.TryProcessAsync(msg1, tokenSource.Token), Times.Once);
+        processor.Verify(x => x.TryProcessAsync(msg2, tokenSource.Token), Times.Never);
+        scope.Verify(x => x.Dispose(), Times.Once);
+    }
 }
 
