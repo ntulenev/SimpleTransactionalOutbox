@@ -62,6 +62,7 @@ public class Startup(IConfiguration configuration)
         });
 
         services.AddSingleton<IValidateOptions<OutboxHostedServiceOptions>, OutboxHostedServiceOptionsValidator>();
+        services.AddSingleton<IValidateOptions<OutboxFetcherOptions>, OutboxFetcherOptionsValidator>();
         services.AddSingleton<IValidateOptions<KafkaProducerOptions>, KafkaProducerOptionsValidator>();
         services.AddSingleton<IValidateOptions<KafkaOutboxSenderOptions>, KafkaOutboxSenderOptionsValidation>();
 
@@ -69,6 +70,7 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IOutboxUnitOfWork, OutboxUnitOfWork>();
 
         services.Configure<OutboxHostedServiceOptions>(_configuration.GetSection(nameof(OutboxHostedServiceOptions)));
+        services.Configure<OutboxFetcherOptions>(_configuration.GetSection(nameof(OutboxFetcherOptions)));
         services.Configure<KafkaOutboxSenderOptions>(_configuration.GetSection(nameof(KafkaOutboxSenderOptions)));
         services.Configure<KafkaProducerOptions>(_configuration.GetSection(nameof(KafkaProducerOptions)));
 

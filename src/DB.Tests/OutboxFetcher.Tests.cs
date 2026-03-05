@@ -4,6 +4,7 @@ using FluentAssertions;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 using Xunit;
 
@@ -36,24 +37,42 @@ public class OutboxFetcherTests : IDisposable
 
         // Arrange
         var ctx = (OutboxContext)null!;
+        var options = Options.Create(new OutboxFetcherOptions { Limit = 10 });
 
         // Act
-        var exception = Record.Exception(() => new OutboxFetcher(ctx));
+        var exception = Record.Exception(() => new OutboxFetcher(ctx, options));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
 
-    [Fact(DisplayName = "OutboxFetcher cant be created with valid context.")]
+    [Fact(DisplayName = "OutboxFetcher cant be created with null options.")]
+    [Trait("Category", "Unit")]
+    public void CantCreateWithNullOptions()
+    {
+
+        // Arrange
+        var ctx = _ctx;
+        IOptions<OutboxFetcherOptions> options = null!;
+
+        // Act
+        var exception = Record.Exception(() => new OutboxFetcher(ctx, options));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+    }
+
+    [Fact(DisplayName = "OutboxFetcher can be created with valid context and options.")]
     [Trait("Category", "Unit")]
     public void CanCreateWithValidContext()
     {
 
         // Arrange
         var ctx = _ctx;
+        var options = Options.Create(new OutboxFetcherOptions { Limit = 10 });
 
         // Act
-        var exception = Record.Exception(() => new OutboxFetcher(ctx));
+        var exception = Record.Exception(() => new OutboxFetcher(ctx, options));
 
         // Assert
         exception.Should().BeNull();
@@ -65,6 +84,7 @@ public class OutboxFetcherTests : IDisposable
     {
 
         // Arrange
+        const int limit = 15;
         var ctx = _ctx;
         var date = DateTime.UtcNow;
         ctx.OutboxMessages.AddRange(Enumerable.Range(0, 100).Select(x => new OutboxMessage
@@ -74,7 +94,8 @@ public class OutboxFetcherTests : IDisposable
             OccurredOn = date.AddMinutes(x)
         }));
         ctx.SaveChanges();
-        var fetcher = new OutboxFetcher(ctx);
+        var options = Options.Create(new OutboxFetcherOptions { Limit = limit });
+        var fetcher = new OutboxFetcher(ctx, options);
         var result = (IEnumerable<IOutboxMessage>)null!;
         using var tokenSource = new CancellationTokenSource();
 
@@ -84,7 +105,7 @@ public class OutboxFetcherTests : IDisposable
         // Assert
         exception.Should().BeNull();
         int indexer = 0;
-        result.Should().HaveCount(10);
+        result.Should().HaveCount(limit);
         foreach (var item in result)
         {
             item.Body.Should().Be($"{indexer}");

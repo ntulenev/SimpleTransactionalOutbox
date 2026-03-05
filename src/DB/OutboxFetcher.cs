@@ -2,6 +2,7 @@ using Abstractions.DB;
 using Abstractions.Models;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace DB;
 
@@ -14,10 +15,13 @@ public class OutboxFetcher : IOutboxFetcher
     /// Creates <see cref="OutboxFetcher"/>.
     /// </summary>
     /// <param name="context">Database context.</param>
+    /// <param name="options">Fetcher options.</param>
     public OutboxFetcher(
-        OutboxContext context)
+        OutboxContext context,
+        IOptions<OutboxFetcherOptions> options)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        _limit = (options ?? throw new ArgumentNullException(nameof(options))).Value.Limit;
     }
 
     /// <inheritdoc/>
@@ -25,14 +29,13 @@ public class OutboxFetcher : IOutboxFetcher
     {
         return await _context.OutboxMessages
                              .OrderBy(x => x.OccurredOn)
-                             .Take(LIMIT)
+                             .Take(_limit)
                              .Select(x => new Models.OutboxMessage(x.MessageId, x.OccurredOn, x.MessageType, x.Body))
                              .ToListAsync(cancellationToken)
                              .ConfigureAwait(false);
     }
 
     private readonly OutboxContext _context;
-
-    private const int LIMIT = 10;
+    private readonly int _limit;
 
 }
