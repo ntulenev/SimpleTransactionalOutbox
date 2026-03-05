@@ -77,6 +77,29 @@ public class OutboxProcessorTests
         exception.Should().BeNull();
     }
 
+    [Fact(DisplayName = "OutboxProcessor stops immediately when cancellation is already requested.")]
+    [Trait("Category", "Unit")]
+    public async Task ProcessAsyncStopsImmediatelyOnPreCancelledTokenAsync()
+    {
+        // Arrange
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+
+        var logger = new Mock<ILogger<OutboxProcessor>>();
+        var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
+        var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
+        var processor = new OutboxProcessor(logger.Object, scopeFactory.Object, delayProvider.Object);
+
+        // Act
+        var exception = await Record.ExceptionAsync(async () => await processor.ProcessAsync(cts.Token));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeAssignableTo<OperationCanceledException>();
+        scopeFactory.Verify(x => x.CreateScope(), Times.Never);
+        delayProvider.Verify(x => x.GetNextDelay(), Times.Never);
+        delayProvider.Verify(x => x.Reset(), Times.Never);
+    }
+
     [Fact(DisplayName = "OutboxProcessor resets backoff delay when outbox processed at least one message.")]
     [Trait("Category", "Unit")]
     public async Task ProcessAsyncResetsBackoffDelayWhenProcessedAnyAsync()
