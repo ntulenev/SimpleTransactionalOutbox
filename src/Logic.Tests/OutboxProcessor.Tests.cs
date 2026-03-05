@@ -1,4 +1,4 @@
-using Abstractions.Service;
+﻿using Abstractions.Service;
 
 using FluentAssertions;
 
@@ -19,8 +19,8 @@ public class OutboxProcessorTests
     {
         // Arrange
         var logger = (ILogger<OutboxProcessor>)null!;
-        var scopeFactory = new Mock<IServiceScopeFactory>();
-        var delayProvider = new Mock<IOutboxBackoffDelayProvider>();
+        var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
+        var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new OutboxProcessor(logger, scopeFactory.Object, delayProvider.Object));
@@ -36,7 +36,7 @@ public class OutboxProcessorTests
         // Arrange
         var logger = new Mock<ILogger<OutboxProcessor>>();
         var scopeFactory = (IServiceScopeFactory)null!;
-        var delayProvider = new Mock<IOutboxBackoffDelayProvider>();
+        var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new OutboxProcessor(logger.Object, scopeFactory, delayProvider.Object));
@@ -51,7 +51,7 @@ public class OutboxProcessorTests
     {
         // Arrange
         var logger = new Mock<ILogger<OutboxProcessor>>();
-        var scopeFactory = new Mock<IServiceScopeFactory>();
+        var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
         var delayProvider = (IOutboxBackoffDelayProvider)null!;
 
         // Act
@@ -67,8 +67,8 @@ public class OutboxProcessorTests
     {
         // Arrange
         var logger = new Mock<ILogger<OutboxProcessor>>();
-        var scopeFactory = new Mock<IServiceScopeFactory>();
-        var delayProvider = new Mock<IOutboxBackoffDelayProvider>();
+        var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
+        var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new OutboxProcessor(logger.Object, scopeFactory.Object, delayProvider.Object));
@@ -84,15 +84,17 @@ public class OutboxProcessorTests
         // Arrange
         using var cts = new CancellationTokenSource();
         var logger = new Mock<ILogger<OutboxProcessor>>();
-        var scopeFactory = new Mock<IServiceScopeFactory>();
-        var delayProvider = new Mock<IOutboxBackoffDelayProvider>();
-        var scope = new Mock<IServiceScope>();
-        var serviceProvider = new Mock<IServiceProvider>();
-        var outbox = new Mock<IOutbox>();
+        var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
+        var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
+        var scope = new Mock<IServiceScope>(MockBehavior.Strict);
+        var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
+        var outbox = new Mock<IOutbox>(MockBehavior.Strict);
 
         scopeFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
         scope.Setup(x => x.ServiceProvider).Returns(serviceProvider.Object);
+        scope.Setup(x => x.Dispose());
         serviceProvider.Setup(x => x.GetService(typeof(IOutbox))).Returns(outbox.Object);
+        delayProvider.Setup(x => x.Reset());
         outbox.Setup(x => x.RunProcessingAsync(cts.Token))
             .Callback(cts.Cancel)
             .ReturnsAsync(true);
@@ -118,14 +120,15 @@ public class OutboxProcessorTests
         // Arrange
         using var cts = new CancellationTokenSource();
         var logger = new Mock<ILogger<OutboxProcessor>>();
-        var scopeFactory = new Mock<IServiceScopeFactory>();
-        var delayProvider = new Mock<IOutboxBackoffDelayProvider>();
-        var scope = new Mock<IServiceScope>();
-        var serviceProvider = new Mock<IServiceProvider>();
-        var outbox = new Mock<IOutbox>();
+        var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
+        var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
+        var scope = new Mock<IServiceScope>(MockBehavior.Strict);
+        var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
+        var outbox = new Mock<IOutbox>(MockBehavior.Strict);
 
         scopeFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
         scope.Setup(x => x.ServiceProvider).Returns(serviceProvider.Object);
+        scope.Setup(x => x.Dispose());
         serviceProvider.Setup(x => x.GetService(typeof(IOutbox))).Returns(outbox.Object);
         outbox.Setup(x => x.RunProcessingAsync(cts.Token))
             .Callback(cts.Cancel)
@@ -153,14 +156,15 @@ public class OutboxProcessorTests
         // Arrange
         using var cts = new CancellationTokenSource();
         var logger = new Mock<ILogger<OutboxProcessor>>();
-        var scopeFactory = new Mock<IServiceScopeFactory>();
-        var delayProvider = new Mock<IOutboxBackoffDelayProvider>();
-        var scope = new Mock<IServiceScope>();
-        var serviceProvider = new Mock<IServiceProvider>();
-        var outbox = new Mock<IOutbox>();
+        var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
+        var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
+        var scope = new Mock<IServiceScope>(MockBehavior.Strict);
+        var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
+        var outbox = new Mock<IOutbox>(MockBehavior.Strict);
 
         scopeFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
         scope.Setup(x => x.ServiceProvider).Returns(serviceProvider.Object);
+        scope.Setup(x => x.Dispose());
         serviceProvider.Setup(x => x.GetService(typeof(IOutbox))).Returns(outbox.Object);
         outbox.Setup(x => x.RunProcessingAsync(cts.Token)).ThrowsAsync(new InvalidOperationException("Boom."));
 
@@ -178,3 +182,4 @@ public class OutboxProcessorTests
         scope.Verify(x => x.Dispose(), Times.Once);
     }
 }
+

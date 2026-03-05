@@ -1,4 +1,4 @@
-using Abstractions.Models;
+﻿using Abstractions.Models;
 
 using Confluent.Kafka;
 
@@ -22,8 +22,8 @@ public class KafkaOutboxSenderTests
 
         // Arrange
         var producer = (IProducer<Null, string>)null!;
-        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
-        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
 
         // Act
@@ -39,9 +39,9 @@ public class KafkaOutboxSenderTests
     {
 
         // Arrange
-        var producer = new Mock<IProducer<Null, string>>();
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
         var serializer = (Abstractions.Serialization.ISerializer<IOutboxMessage>)null!;
-        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
 
         // Act
@@ -57,8 +57,8 @@ public class KafkaOutboxSenderTests
     {
 
         // Arrange
-        var producer = new Mock<IProducer<Null, string>>();
-        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
         var options = (IOptions<KafkaOutboxSenderOptions>)null!;
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
 
@@ -75,9 +75,9 @@ public class KafkaOutboxSenderTests
     {
 
         // Arrange
-        var producer = new Mock<IProducer<Null, string>>();
-        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
-        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
         var logger = (ILogger<KafkaOutboxSender>)null!;
 
         // Act
@@ -93,9 +93,10 @@ public class KafkaOutboxSenderTests
     {
 
         // Arrange
-        var producer = new Mock<IProducer<Null, string>>();
-        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
-        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
+        options.Setup(x => x.Value).Returns((KafkaOutboxSenderOptions)null!);
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
 
         // Act
@@ -111,9 +112,9 @@ public class KafkaOutboxSenderTests
     {
 
         // Arrange
-        var producer = new Mock<IProducer<Null, string>>();
-        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
-        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
         options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = "A" });
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
 
@@ -130,9 +131,9 @@ public class KafkaOutboxSenderTests
     {
 
         // Arrange
-        var producer = new Mock<IProducer<Null, string>>();
-        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
-        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
         options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = "A" });
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
         var sender = new KafkaOutboxSender(producer.Object, serializer.Object, options.Object, logger.Object);
@@ -152,17 +153,19 @@ public class KafkaOutboxSenderTests
 
         // Arrange
         var topicName = "A";
-        var producer = new Mock<IProducer<Null, string>>();
-        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>();
-        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>();
+        var producer = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+        var serializer = new Mock<Abstractions.Serialization.ISerializer<IOutboxMessage>>(MockBehavior.Strict);
+        var options = new Mock<IOptions<KafkaOutboxSenderOptions>>(MockBehavior.Strict);
         options.Setup(x => x.Value).Returns(new KafkaOutboxSenderOptions() { TopicName = topicName });
         var logger = new Mock<ILogger<KafkaOutboxSender>>();
         var sender = new KafkaOutboxSender(producer.Object, serializer.Object, options.Object, logger.Object);
         using var token = new CancellationTokenSource();
-        var message = new Mock<IOutboxMessage>();
+        var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
         var jsonStr = "test";
         serializer.Setup(x => x.Serialize(message.Object)).Returns(jsonStr);
+        producer.Setup(x => x.ProduceAsync(topicName, It.IsAny<Message<Null, string>>(), token.Token))
+            .ReturnsAsync(new DeliveryResult<Null, string>());
 
 
         // Act
@@ -174,3 +177,4 @@ public class KafkaOutboxSenderTests
         producer.Verify(x => x.ProduceAsync(topicName, It.Is<Message<Null, string>>(x => x.Value == jsonStr), token.Token), Times.Once);
     }
 }
+

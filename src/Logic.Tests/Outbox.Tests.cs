@@ -1,4 +1,4 @@
-using Abstractions.DB;
+﻿using Abstractions.DB;
 using Abstractions.Service;
 
 using FluentAssertions;
@@ -21,7 +21,7 @@ public class OutboxTests
     {
         // Arrange
         var fetcher = (IOutboxFetcher)null!;
-        var scopedFactory = new Mock<IServiceScopeFactory>();
+        var scopedFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
         var logger = new Mock<ILogger<Outbox>>();
 
         // Act
@@ -37,7 +37,7 @@ public class OutboxTests
     public void CantCreateWithNullFactory()
     {
         // Arrange
-        var fetcher = new Mock<IOutboxFetcher>();
+        var fetcher = new Mock<IOutboxFetcher>(MockBehavior.Strict);
         var scopedFactory = (IServiceScopeFactory)null!;
         var logger = new Mock<ILogger<Outbox>>();
 
@@ -53,8 +53,8 @@ public class OutboxTests
     public void CantCreateWithNullLogger()
     {
         // Arrange
-        var fetcher = new Mock<IOutboxFetcher>();
-        var scopedFactory = new Mock<IServiceScopeFactory>();
+        var fetcher = new Mock<IOutboxFetcher>(MockBehavior.Strict);
+        var scopedFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
         var logger = (ILogger<Outbox>)null!;
 
         // Act
@@ -69,8 +69,8 @@ public class OutboxTests
     public void CanCreate()
     {
         // Arrange
-        var fetcher = new Mock<IOutboxFetcher>();
-        var scopedFactory = new Mock<IServiceScopeFactory>();
+        var fetcher = new Mock<IOutboxFetcher>(MockBehavior.Strict);
+        var scopedFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
         var logger = new Mock<ILogger<Outbox>>();
 
         // Act
@@ -85,19 +85,20 @@ public class OutboxTests
     public async Task RunProcessingAsyncProcessMessagesCorrectlyAsync()
     {
         // Arrange
-        var fetcher = new Mock<IOutboxFetcher>();
-        var scopedFactory = new Mock<IServiceScopeFactory>();
+        var fetcher = new Mock<IOutboxFetcher>(MockBehavior.Strict);
+        var scopedFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
         var logger = new Mock<ILogger<Outbox>>();
         var outBox = new Outbox(fetcher.Object, scopedFactory.Object, logger.Object);
         using var tokenSource = new CancellationTokenSource();
 
         var msg = new TestMessage();
         fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync([msg]);
-        var scope = new Mock<IServiceScope>();
+        var scope = new Mock<IServiceScope>(MockBehavior.Strict);
         scopedFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
-        var provider = new Mock<IServiceProvider>();
+        var provider = new Mock<IServiceProvider>(MockBehavior.Strict);
         scope.Setup(x => x.ServiceProvider).Returns(provider.Object);
-        var processor = new Mock<IOutboxMessageProcessor>();
+        scope.Setup(x => x.Dispose());
+        var processor = new Mock<IOutboxMessageProcessor>(MockBehavior.Strict);
         provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor))).Returns(processor.Object);
         processor.Setup(x => x.TryProcessAsync(msg, tokenSource.Token)).ReturnsAsync(true);
 
@@ -119,8 +120,8 @@ public class OutboxTests
     public async Task RunProcessingAsyncReturnsFalseWhenNoMessagesAsync()
     {
         // Arrange
-        var fetcher = new Mock<IOutboxFetcher>();
-        var scopedFactory = new Mock<IServiceScopeFactory>();
+        var fetcher = new Mock<IOutboxFetcher>(MockBehavior.Strict);
+        var scopedFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
         var logger = new Mock<ILogger<Outbox>>();
         var outBox = new Outbox(fetcher.Object, scopedFactory.Object, logger.Object);
         using var tokenSource = new CancellationTokenSource();
@@ -136,3 +137,4 @@ public class OutboxTests
         scopedFactory.Verify(x => x.CreateScope(), Times.Never);
     }
 }
+

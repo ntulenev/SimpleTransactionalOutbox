@@ -1,4 +1,4 @@
-using Abstractions.DB;
+﻿using Abstractions.DB;
 using Abstractions.Models;
 
 using FluentAssertions;
@@ -36,7 +36,7 @@ public class DataProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IProcessingDataUnitOfWork>();
+        var uow = new Mock<IProcessingDataUnitOfWork>(MockBehavior.Strict);
         var logger = (ILogger<DataProcessor>)null!;
 
         // Act
@@ -52,7 +52,7 @@ public class DataProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IProcessingDataUnitOfWork>();
+        var uow = new Mock<IProcessingDataUnitOfWork>(MockBehavior.Strict);
         var logger = new Mock<ILogger<DataProcessor>>();
 
         // Act
@@ -68,7 +68,7 @@ public class DataProcessorTests
     public async Task CantProcessDataWithNullParamAsync()
     {
         // Arrange
-        var uow = new Mock<IProcessingDataUnitOfWork>();
+        var uow = new Mock<IProcessingDataUnitOfWork>(MockBehavior.Strict);
         var logger = new Mock<ILogger<DataProcessor>>();
         var data = (IProcessingData)null!;
         var p = new DataProcessor(uow.Object, logger.Object);
@@ -87,12 +87,16 @@ public class DataProcessorTests
     {
         // Arrange
         var logger = new Mock<ILogger<DataProcessor>>();
-        var data = new Mock<IProcessingData>();
+        var data = new Mock<IProcessingData>(MockBehavior.Strict);
         using var token = new CancellationTokenSource();
-        var uow = new Mock<IProcessingDataUnitOfWork>();
+        var uow = new Mock<IProcessingDataUnitOfWork>(MockBehavior.Strict);
         int callOrder = 0;
-        uow.Setup(x => x.ProcessDataAsync(data.Object, token.Token)).Callback(() => callOrder++.Should().Be(0));
-        uow.Setup(x => x.SaveAsync(token.Token)).Callback(() => callOrder++.Should().Be(1));
+        uow.Setup(x => x.ProcessDataAsync(data.Object, token.Token))
+            .Callback(() => callOrder++.Should().Be(0))
+            .Returns(Task.CompletedTask);
+        uow.Setup(x => x.SaveAsync(token.Token))
+            .Callback(() => callOrder++.Should().Be(1))
+            .Returns(Task.CompletedTask);
         var p = new DataProcessor(uow.Object, logger.Object);
 
         // Act
@@ -106,3 +110,4 @@ public class DataProcessorTests
 
     }
 }
+

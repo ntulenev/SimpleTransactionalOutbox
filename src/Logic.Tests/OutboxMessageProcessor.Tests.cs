@@ -1,4 +1,4 @@
-using Abstractions.Bus;
+﻿using Abstractions.Bus;
 using Abstractions.DB;
 using Abstractions.Models;
 
@@ -21,7 +21,7 @@ public class OutboxMessageProcessorTests
 
         // Arrange
         var uow = (IOutboxUnitOfWork)null!;
-        var sender = new Mock<IOutboxSender>();
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
 
         // Act
@@ -37,7 +37,7 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
         var sender = (IOutboxSender)null!;
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
 
@@ -54,8 +54,8 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
-        var sender = new Mock<IOutboxSender>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = (ILogger<OutboxMessageProcessor>)null!;
 
         // Act
@@ -71,8 +71,8 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
-        var sender = new Mock<IOutboxSender>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
 
         // Act
@@ -88,8 +88,8 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
-        var sender = new Mock<IOutboxSender>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
         var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
         using var cts = new CancellationTokenSource();
@@ -108,12 +108,12 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
-        var sender = new Mock<IOutboxSender>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
         var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
         using var cts = new CancellationTokenSource();
-        var message = new Mock<IOutboxMessage>();
+        var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
         sender.Setup(x => x.SendAsync(message.Object, cts.Token)).ThrowsAsync(new Exception());
 
@@ -133,13 +133,14 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
-        var sender = new Mock<IOutboxSender>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
         var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
         using var cts = new CancellationTokenSource();
-        var message = new Mock<IOutboxMessage>();
+        var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
+        sender.Setup(x => x.SendAsync(message.Object, cts.Token)).Returns(Task.CompletedTask);
         uow.Setup(x => x.RemoveOutboxMessageAsync(message.Object, cts.Token)).ThrowsAsync(new Exception());
 
 
@@ -159,13 +160,15 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
-        var sender = new Mock<IOutboxSender>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
         var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
         using var cts = new CancellationTokenSource();
-        var message = new Mock<IOutboxMessage>();
+        var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
+        sender.Setup(x => x.SendAsync(message.Object, cts.Token)).Returns(Task.CompletedTask);
+        uow.Setup(x => x.RemoveOutboxMessageAsync(message.Object, cts.Token)).Returns(Task.CompletedTask);
         uow.Setup(x => x.SaveAsync(cts.Token)).ThrowsAsync(new Exception());
 
 
@@ -184,17 +187,23 @@ public class OutboxMessageProcessorTests
     {
 
         // Arrange
-        var uow = new Mock<IOutboxUnitOfWork>();
-        var sender = new Mock<IOutboxSender>();
+        var uow = new Mock<IOutboxUnitOfWork>(MockBehavior.Strict);
+        var sender = new Mock<IOutboxSender>(MockBehavior.Strict);
         var logger = new Mock<ILogger<OutboxMessageProcessor>>();
         var processor = new OutboxMessageProcessor(uow.Object, sender.Object, logger.Object);
         using var cts = new CancellationTokenSource();
-        var message = new Mock<IOutboxMessage>();
+        var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
         int callOrder = 0;
-        sender.Setup(x => x.SendAsync(message.Object, cts.Token)).Callback(() => callOrder++.Should().Be(0));
-        uow.Setup(x => x.RemoveOutboxMessageAsync(message.Object, cts.Token)).Callback(() => callOrder++.Should().Be(1));
-        uow.Setup(x => x.SaveAsync(cts.Token)).Callback(() => callOrder++.Should().Be(2));
+        sender.Setup(x => x.SendAsync(message.Object, cts.Token))
+            .Callback(() => callOrder++.Should().Be(0))
+            .Returns(Task.CompletedTask);
+        uow.Setup(x => x.RemoveOutboxMessageAsync(message.Object, cts.Token))
+            .Callback(() => callOrder++.Should().Be(1))
+            .Returns(Task.CompletedTask);
+        uow.Setup(x => x.SaveAsync(cts.Token))
+            .Callback(() => callOrder++.Should().Be(2))
+            .Returns(Task.CompletedTask);
 
 
         bool result = true;
@@ -210,3 +219,4 @@ public class OutboxMessageProcessorTests
         uow.Verify(x => x.SaveAsync(cts.Token), Times.Once);
     }
 }
+

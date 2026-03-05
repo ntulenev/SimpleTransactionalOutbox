@@ -1,4 +1,4 @@
-using Abstractions.Models;
+﻿using Abstractions.Models;
 using Abstractions.Serialization;
 
 using FluentAssertions;
@@ -34,7 +34,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = (OutboxContext)null!;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object));
@@ -52,7 +52,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = (ILogger<ProcessingDataUnitOfWork>)null!;
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new ProcessingDataUnitOfWork(ctx, logger, serializer.Object));
@@ -86,7 +86,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         // Act
         var exception = Record.Exception(() => new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object));
@@ -103,7 +103,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
         var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
         var data = (IProcessingData)null!;
         // Act
@@ -128,7 +128,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
         var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
         var data = new TestData
         {
@@ -164,7 +164,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         var data = new TestData
         {
@@ -204,7 +204,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         });
         _ctx.SaveChanges();
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
         var uow = new ProcessingDataUnitOfWork(ctx, logger.Object, serializer.Object);
         var data = new TestData
         {
@@ -247,7 +247,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         _ctx.ProcessingData.Add(oldData);
         _ctx.SaveChanges();
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         var data = new TestData
         {
@@ -283,7 +283,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         var data = new TestData
         {
@@ -312,7 +312,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         var data = new TestData
         {
@@ -341,7 +341,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         var data = new TestData
         {
@@ -371,7 +371,7 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
         // Arrange
         var ctx = _ctx;
         var logger = new Mock<ILogger<ProcessingDataUnitOfWork>>();
-        var serializer = new Mock<ISerializer<IProcessingData>>();
+        var serializer = new Mock<ISerializer<IProcessingData>>(MockBehavior.Strict);
 
         var data = new TestData
         {
@@ -403,3 +403,4 @@ public class ProcessingDataUnitOfWorkTests : IDisposable
     private readonly OutboxContext _ctx;
     private readonly SqliteConnection _conn;
 }
+
