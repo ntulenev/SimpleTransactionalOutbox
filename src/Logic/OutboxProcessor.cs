@@ -1,6 +1,9 @@
 using Abstractions.Service;
 
-namespace OutboxService.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace Logic;
 
 /// <summary>
 /// Outbox processing loop implementation.
