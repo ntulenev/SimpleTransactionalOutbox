@@ -175,6 +175,24 @@ public class OutboxUnitOfWorkTests : IDisposable
         exception.Should().NotBeNull().And.BeOfType<ObjectDisposedException>();
     }
 
+    [Fact(DisplayName = "OutboxUnitOfWork can't save when cancellation already requested.")]
+    [Trait("Category", "Unit")]
+    public async Task CantSaveWhenCancellationRequestedAsync()
+    {
+        // Arrange
+        var ctx = _ctx;
+        var logger = NullLogger<OutboxUnitOfWork>.Instance;
+        var outbox = new OutboxUnitOfWork(ctx, logger);
+        using var tokenSource = new CancellationTokenSource();
+        await tokenSource.CancelAsync();
+
+        // Act
+        var exception = await Record.ExceptionAsync(async () => await outbox.SaveAsync(tokenSource.Token));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeAssignableTo<OperationCanceledException>();
+    }
+
     [Fact(DisplayName = "OutboxUnitOfWork can remove message.")]
     [Trait("Category", "Unit")]
     public async Task CanRemoveMessageAsync()
