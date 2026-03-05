@@ -112,16 +112,23 @@ public class ProcessDataControllerTests
 
         var decodedBody = "{\"id\":5,\"value\":7}";
         var item = new ProcessingData(5, 7);
-        deserializer.Setup(x => x.Deserialize(decodedBody)).Returns(item);
-        service.Setup(x => x.ProcessDataAsync(item, cts.Token)).Returns(Task.CompletedTask);
+        var deserializeCalls = 0;
+        var processDataCalls = 0;
+
+        deserializer.Setup(x => x.Deserialize(decodedBody))
+            .Callback(() => deserializeCalls++)
+            .Returns(item);
+        service.Setup(x => x.ProcessDataAsync(item, cts.Token))
+            .Callback(() => processDataCalls++)
+            .Returns(Task.CompletedTask);
 
         // Act
         var result = await controller.ProcessDataAsync();
 
         // Assert
         result.Should().NotBeNull().And.BeOfType<OkResult>();
-        deserializer.Verify(x => x.Deserialize(decodedBody), Times.Once);
-        service.Verify(x => x.ProcessDataAsync(item, cts.Token), Times.Once);
+        deserializeCalls.Should().Be(1);
+        processDataCalls.Should().Be(1);
     }
 
     [Fact(DisplayName = "ProcessDataController rethrows exceptions from deserializer.")]
@@ -144,6 +151,11 @@ public class ProcessDataControllerTests
             }
         };
 
+        var processDataCalls = 0;
+        service.Setup(x => x.ProcessDataAsync(It.IsAny<ProcessingData>(), It.IsAny<CancellationToken>()))
+            .Callback(() => processDataCalls++)
+            .Returns(Task.CompletedTask);
+
         deserializer.Setup(x => x.Deserialize("body")).Throws(new InvalidOperationException("boom"));
 
         // Act
@@ -151,7 +163,7 @@ public class ProcessDataControllerTests
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<InvalidOperationException>();
-        service.Verify(x => x.ProcessDataAsync(It.IsAny<ProcessingData>(), It.IsAny<CancellationToken>()), Times.Never);
+        processDataCalls.Should().Be(0);
     }
 
     private static DefaultHttpContext CreateHttpContextWithBody(string body)

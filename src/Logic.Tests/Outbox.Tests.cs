@@ -1,4 +1,5 @@
-﻿using Abstractions.DB;
+using Abstractions.DB;
+using Abstractions.Models;
 using Abstractions.Service;
 
 using FluentAssertions;
@@ -92,27 +93,47 @@ public class OutboxTests
         using var tokenSource = new CancellationTokenSource();
 
         var msg = new TestMessage();
-        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync([msg]);
+        var readOutboxMessagesCalls = 0;
+        var createScopeCalls = 0;
+        var serviceProviderCalls = 0;
+        var getServiceCalls = 0;
+        var tryProcessCalls = 0;
+        var disposeCalls = 0;
+
+        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token))
+            .Callback(() => readOutboxMessagesCalls++)
+            .ReturnsAsync([msg]);
+
         var scope = new Mock<IServiceScope>(MockBehavior.Strict);
-        scopedFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
+        scopedFactory.Setup(x => x.CreateScope())
+            .Callback(() => createScopeCalls++)
+            .Returns(scope.Object);
+
         var provider = new Mock<IServiceProvider>(MockBehavior.Strict);
-        scope.Setup(x => x.ServiceProvider).Returns(provider.Object);
-        scope.Setup(x => x.Dispose());
+        scope.SetupGet(x => x.ServiceProvider)
+            .Callback(() => serviceProviderCalls++)
+            .Returns(provider.Object);
+        scope.Setup(x => x.Dispose()).Callback(() => disposeCalls++);
+
         var processor = new Mock<IOutboxMessageProcessor>(MockBehavior.Strict);
-        provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor))).Returns(processor.Object);
-        processor.Setup(x => x.TryProcessAsync(msg, tokenSource.Token)).ReturnsAsync(true);
+        provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor)))
+            .Callback(() => getServiceCalls++)
+            .Returns(processor.Object);
+        processor.Setup(x => x.TryProcessAsync(msg, tokenSource.Token))
+            .Callback(() => tryProcessCalls++)
+            .ReturnsAsync(true);
 
         // Act
         var result = await outBox.RunProcessingAsync(tokenSource.Token);
 
         // Assert
         result.Should().BeTrue();
-        fetcher.Verify(x => x.ReadOutboxMessagesAsync(tokenSource.Token), Times.Once);
-        scopedFactory.Verify(x => x.CreateScope(), Times.Once);
-        scope.Verify(x => x.ServiceProvider, Times.Once);
-        provider.Verify(x => x.GetService(typeof(IOutboxMessageProcessor)), Times.Once);
-        processor.Verify(x => x.TryProcessAsync(msg, tokenSource.Token), Times.Once);
-        scope.Verify(x => x.Dispose(), Times.Once);
+        readOutboxMessagesCalls.Should().Be(1);
+        createScopeCalls.Should().Be(1);
+        serviceProviderCalls.Should().Be(1);
+        getServiceCalls.Should().Be(1);
+        tryProcessCalls.Should().Be(1);
+        disposeCalls.Should().Be(1);
     }
 
     [Fact(DisplayName = "Outbox returns false when there are no messages.")]
@@ -126,15 +147,31 @@ public class OutboxTests
         var outBox = new Outbox(fetcher.Object, scopedFactory.Object, logger.Object);
         using var tokenSource = new CancellationTokenSource();
 
-        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync([]);
+        var readOutboxMessagesCalls = 0;
+        var createScopeCalls = 0;
+
+        var scope = new Mock<IServiceScope>(MockBehavior.Strict);
+        var provider = new Mock<IServiceProvider>(MockBehavior.Strict);
+        var processor = new Mock<IOutboxMessageProcessor>(MockBehavior.Strict);
+
+        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token))
+            .Callback(() => readOutboxMessagesCalls++)
+            .ReturnsAsync([]);
+        scopedFactory.Setup(x => x.CreateScope())
+            .Callback(() => createScopeCalls++)
+            .Returns(scope.Object);
+        scope.SetupGet(x => x.ServiceProvider).Returns(provider.Object);
+        scope.Setup(x => x.Dispose());
+        provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor))).Returns(processor.Object);
+        processor.Setup(x => x.TryProcessAsync(It.IsAny<IOutboxMessage>(), tokenSource.Token)).ReturnsAsync(true);
 
         // Act
         var result = await outBox.RunProcessingAsync(tokenSource.Token);
 
         // Assert
         result.Should().BeFalse();
-        fetcher.Verify(x => x.ReadOutboxMessagesAsync(tokenSource.Token), Times.Once);
-        scopedFactory.Verify(x => x.CreateScope(), Times.Never);
+        readOutboxMessagesCalls.Should().Be(1);
+        createScopeCalls.Should().Be(0);
     }
 
     [Fact(DisplayName = "Outbox stops processing after first failed message and returns true.")]
@@ -150,28 +187,42 @@ public class OutboxTests
 
         var msg1 = new TestMessage();
         var msg2 = new TestMessage();
-        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token)).ReturnsAsync([msg1, msg2]);
+        var readOutboxMessagesCalls = 0;
+        var createScopeCalls = 0;
+        var tryProcessMsg1Calls = 0;
+        var tryProcessMsg2Calls = 0;
+        var disposeCalls = 0;
+
+        fetcher.Setup(x => x.ReadOutboxMessagesAsync(tokenSource.Token))
+            .Callback(() => readOutboxMessagesCalls++)
+            .ReturnsAsync([msg1, msg2]);
 
         var scope = new Mock<IServiceScope>(MockBehavior.Strict);
         var provider = new Mock<IServiceProvider>(MockBehavior.Strict);
         var processor = new Mock<IOutboxMessageProcessor>(MockBehavior.Strict);
 
-        scopedFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
+        scopedFactory.Setup(x => x.CreateScope())
+            .Callback(() => createScopeCalls++)
+            .Returns(scope.Object);
         scope.Setup(x => x.ServiceProvider).Returns(provider.Object);
-        scope.Setup(x => x.Dispose());
+        scope.Setup(x => x.Dispose()).Callback(() => disposeCalls++);
         provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor))).Returns(processor.Object);
-        processor.Setup(x => x.TryProcessAsync(msg1, tokenSource.Token)).ReturnsAsync(false);
+        processor.Setup(x => x.TryProcessAsync(msg1, tokenSource.Token))
+            .Callback(() => tryProcessMsg1Calls++)
+            .ReturnsAsync(false);
+        processor.Setup(x => x.TryProcessAsync(msg2, tokenSource.Token))
+            .Callback(() => tryProcessMsg2Calls++)
+            .ReturnsAsync(true);
 
         // Act
         var result = await outBox.RunProcessingAsync(tokenSource.Token);
 
         // Assert
         result.Should().BeTrue();
-        fetcher.Verify(x => x.ReadOutboxMessagesAsync(tokenSource.Token), Times.Once);
-        scopedFactory.Verify(x => x.CreateScope(), Times.Once);
-        processor.Verify(x => x.TryProcessAsync(msg1, tokenSource.Token), Times.Once);
-        processor.Verify(x => x.TryProcessAsync(msg2, tokenSource.Token), Times.Never);
-        scope.Verify(x => x.Dispose(), Times.Once);
+        readOutboxMessagesCalls.Should().Be(1);
+        createScopeCalls.Should().Be(1);
+        tryProcessMsg1Calls.Should().Be(1);
+        tryProcessMsg2Calls.Should().Be(0);
+        disposeCalls.Should().Be(1);
     }
 }
-

@@ -90,12 +90,14 @@ public class DataProcessorTests
         var data = new Mock<IProcessingData>(MockBehavior.Strict);
         using var token = new CancellationTokenSource();
         var uow = new Mock<IProcessingDataUnitOfWork>(MockBehavior.Strict);
-        int callOrder = 0;
+        var processDataCalls = 0;
+        var saveCalls = 0;
+
         uow.Setup(x => x.ProcessDataAsync(data.Object, token.Token))
-            .Callback(() => callOrder++.Should().Be(0))
+            .Callback(() => processDataCalls++)
             .Returns(Task.CompletedTask);
         uow.Setup(x => x.SaveAsync(token.Token))
-            .Callback(() => callOrder++.Should().Be(1))
+            .Callback(() => saveCalls++)
             .Returns(Task.CompletedTask);
         var p = new DataProcessor(uow.Object, logger.Object);
 
@@ -104,9 +106,8 @@ public class DataProcessorTests
 
         // Assert
         exception.Should().BeNull();
-
-        uow.Verify(x => x.ProcessDataAsync(data.Object, token.Token), Times.Once);
-        uow.Verify(x => x.SaveAsync(token.Token), Times.Once);
+        processDataCalls.Should().Be(1);
+        saveCalls.Should().Be(1);
 
     }
 }

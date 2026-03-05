@@ -33,7 +33,11 @@ public class OutboxHostedServiceTests
         // Arrange
         var processor = new Mock<IOutboxProcessor>(MockBehavior.Strict);
         using var cts = new CancellationTokenSource();
-        processor.Setup(x => x.ProcessAsync(cts.Token)).Returns(Task.CompletedTask);
+        var processCalls = 0;
+
+        processor.Setup(x => x.ProcessAsync(cts.Token))
+            .Callback(() => processCalls++)
+            .Returns(Task.CompletedTask);
 
         using var service = new TestableOutboxHostedService(processor.Object);
 
@@ -42,7 +46,7 @@ public class OutboxHostedServiceTests
 
         // Assert
         exception.Should().BeNull();
-        processor.Verify(x => x.ProcessAsync(cts.Token), Times.Once);
+        processCalls.Should().Be(1);
     }
 
     private sealed class TestableOutboxHostedService(IOutboxProcessor processor) : OutboxHostedService(processor)

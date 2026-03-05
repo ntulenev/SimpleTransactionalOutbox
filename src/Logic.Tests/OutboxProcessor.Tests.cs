@@ -88,6 +88,27 @@ public class OutboxProcessorTests
         var logger = new Mock<ILogger<OutboxProcessor>>();
         var scopeFactory = new Mock<IServiceScopeFactory>(MockBehavior.Strict);
         var delayProvider = new Mock<IOutboxBackoffDelayProvider>(MockBehavior.Strict);
+        var scope = new Mock<IServiceScope>(MockBehavior.Strict);
+        var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
+        var outbox = new Mock<IOutbox>(MockBehavior.Strict);
+
+        var createScopeCalls = 0;
+        var getNextDelayCalls = 0;
+        var resetCalls = 0;
+
+        scopeFactory.Setup(x => x.CreateScope())
+            .Callback(() => createScopeCalls++)
+            .Returns(scope.Object);
+        scope.SetupGet(x => x.ServiceProvider).Returns(serviceProvider.Object);
+        scope.Setup(x => x.Dispose());
+        serviceProvider.Setup(x => x.GetService(typeof(IOutbox))).Returns(outbox.Object);
+        outbox.Setup(x => x.RunProcessingAsync(cts.Token)).ReturnsAsync(false);
+
+        delayProvider.Setup(x => x.GetNextDelay())
+            .Callback(() => getNextDelayCalls++)
+            .Returns(TimeSpan.Zero);
+        delayProvider.Setup(x => x.Reset()).Callback(() => resetCalls++);
+
         var processor = new OutboxProcessor(logger.Object, scopeFactory.Object, delayProvider.Object);
 
         // Act
@@ -95,9 +116,9 @@ public class OutboxProcessorTests
 
         // Assert
         exception.Should().NotBeNull().And.BeAssignableTo<OperationCanceledException>();
-        scopeFactory.Verify(x => x.CreateScope(), Times.Never);
-        delayProvider.Verify(x => x.GetNextDelay(), Times.Never);
-        delayProvider.Verify(x => x.Reset(), Times.Never);
+        createScopeCalls.Should().Be(0);
+        getNextDelayCalls.Should().Be(0);
+        resetCalls.Should().Be(0);
     }
 
     [Fact(DisplayName = "OutboxProcessor resets backoff delay when outbox processed at least one message.")]
@@ -113,13 +134,28 @@ public class OutboxProcessorTests
         var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
         var outbox = new Mock<IOutbox>(MockBehavior.Strict);
 
-        scopeFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
+        var createScopeCalls = 0;
+        var runProcessingCalls = 0;
+        var resetCalls = 0;
+        var getNextDelayCalls = 0;
+        var disposeCalls = 0;
+
+        scopeFactory.Setup(x => x.CreateScope())
+            .Callback(() => createScopeCalls++)
+            .Returns(scope.Object);
         scope.Setup(x => x.ServiceProvider).Returns(serviceProvider.Object);
-        scope.Setup(x => x.Dispose());
+        scope.Setup(x => x.Dispose()).Callback(() => disposeCalls++);
         serviceProvider.Setup(x => x.GetService(typeof(IOutbox))).Returns(outbox.Object);
-        delayProvider.Setup(x => x.Reset());
+        delayProvider.Setup(x => x.Reset()).Callback(() => resetCalls++);
+        delayProvider.Setup(x => x.GetNextDelay())
+            .Callback(() => getNextDelayCalls++)
+            .Returns(TimeSpan.Zero);
         outbox.Setup(x => x.RunProcessingAsync(cts.Token))
-            .Callback(cts.Cancel)
+            .Callback(() =>
+            {
+                runProcessingCalls++;
+                cts.Cancel();
+            })
             .ReturnsAsync(true);
 
         var processor = new OutboxProcessor(logger.Object, scopeFactory.Object, delayProvider.Object);
@@ -129,11 +165,11 @@ public class OutboxProcessorTests
 
         // Assert
         exception.Should().NotBeNull().And.BeAssignableTo<OperationCanceledException>();
-        scopeFactory.Verify(x => x.CreateScope(), Times.Once);
-        outbox.Verify(x => x.RunProcessingAsync(cts.Token), Times.Once);
-        delayProvider.Verify(x => x.Reset(), Times.Once);
-        delayProvider.Verify(x => x.GetNextDelay(), Times.Never);
-        scope.Verify(x => x.Dispose(), Times.Once);
+        createScopeCalls.Should().Be(1);
+        runProcessingCalls.Should().Be(1);
+        resetCalls.Should().Be(1);
+        getNextDelayCalls.Should().Be(0);
+        disposeCalls.Should().Be(1);
     }
 
     [Fact(DisplayName = "OutboxProcessor waits with backoff delay when there are no messages to process.")]
@@ -149,14 +185,29 @@ public class OutboxProcessorTests
         var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
         var outbox = new Mock<IOutbox>(MockBehavior.Strict);
 
-        scopeFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
+        var createScopeCalls = 0;
+        var runProcessingCalls = 0;
+        var getNextDelayCalls = 0;
+        var resetCalls = 0;
+        var disposeCalls = 0;
+
+        scopeFactory.Setup(x => x.CreateScope())
+            .Callback(() => createScopeCalls++)
+            .Returns(scope.Object);
         scope.Setup(x => x.ServiceProvider).Returns(serviceProvider.Object);
-        scope.Setup(x => x.Dispose());
+        scope.Setup(x => x.Dispose()).Callback(() => disposeCalls++);
         serviceProvider.Setup(x => x.GetService(typeof(IOutbox))).Returns(outbox.Object);
         outbox.Setup(x => x.RunProcessingAsync(cts.Token))
-            .Callback(cts.Cancel)
+            .Callback(() =>
+            {
+                runProcessingCalls++;
+                cts.Cancel();
+            })
             .ReturnsAsync(false);
-        delayProvider.Setup(x => x.GetNextDelay()).Returns(TimeSpan.Zero);
+        delayProvider.Setup(x => x.GetNextDelay())
+            .Callback(() => getNextDelayCalls++)
+            .Returns(TimeSpan.Zero);
+        delayProvider.Setup(x => x.Reset()).Callback(() => resetCalls++);
 
         var processor = new OutboxProcessor(logger.Object, scopeFactory.Object, delayProvider.Object);
 
@@ -165,11 +216,11 @@ public class OutboxProcessorTests
 
         // Assert
         exception.Should().NotBeNull().And.BeAssignableTo<OperationCanceledException>();
-        scopeFactory.Verify(x => x.CreateScope(), Times.Once);
-        outbox.Verify(x => x.RunProcessingAsync(cts.Token), Times.Once);
-        delayProvider.Verify(x => x.GetNextDelay(), Times.Once);
-        delayProvider.Verify(x => x.Reset(), Times.Never);
-        scope.Verify(x => x.Dispose(), Times.Once);
+        createScopeCalls.Should().Be(1);
+        runProcessingCalls.Should().Be(1);
+        getNextDelayCalls.Should().Be(1);
+        resetCalls.Should().Be(0);
+        disposeCalls.Should().Be(1);
     }
 
     [Fact(DisplayName = "OutboxProcessor rethrows non-cancellation exception.")]
@@ -185,11 +236,25 @@ public class OutboxProcessorTests
         var serviceProvider = new Mock<IServiceProvider>(MockBehavior.Strict);
         var outbox = new Mock<IOutbox>(MockBehavior.Strict);
 
-        scopeFactory.Setup(x => x.CreateScope()).Returns(scope.Object);
+        var createScopeCalls = 0;
+        var runProcessingCalls = 0;
+        var getNextDelayCalls = 0;
+        var resetCalls = 0;
+        var disposeCalls = 0;
+
+        scopeFactory.Setup(x => x.CreateScope())
+            .Callback(() => createScopeCalls++)
+            .Returns(scope.Object);
         scope.Setup(x => x.ServiceProvider).Returns(serviceProvider.Object);
-        scope.Setup(x => x.Dispose());
+        scope.Setup(x => x.Dispose()).Callback(() => disposeCalls++);
         serviceProvider.Setup(x => x.GetService(typeof(IOutbox))).Returns(outbox.Object);
-        outbox.Setup(x => x.RunProcessingAsync(cts.Token)).ThrowsAsync(new InvalidOperationException("Boom."));
+        outbox.Setup(x => x.RunProcessingAsync(cts.Token))
+            .Callback(() => runProcessingCalls++)
+            .ThrowsAsync(new InvalidOperationException("Boom."));
+        delayProvider.Setup(x => x.GetNextDelay())
+            .Callback(() => getNextDelayCalls++)
+            .Returns(TimeSpan.Zero);
+        delayProvider.Setup(x => x.Reset()).Callback(() => resetCalls++);
 
         var processor = new OutboxProcessor(logger.Object, scopeFactory.Object, delayProvider.Object);
 
@@ -198,11 +263,11 @@ public class OutboxProcessorTests
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<InvalidOperationException>();
-        scopeFactory.Verify(x => x.CreateScope(), Times.Once);
-        outbox.Verify(x => x.RunProcessingAsync(cts.Token), Times.Once);
-        delayProvider.Verify(x => x.GetNextDelay(), Times.Never);
-        delayProvider.Verify(x => x.Reset(), Times.Never);
-        scope.Verify(x => x.Dispose(), Times.Once);
+        createScopeCalls.Should().Be(1);
+        runProcessingCalls.Should().Be(1);
+        getNextDelayCalls.Should().Be(0);
+        resetCalls.Should().Be(0);
+        disposeCalls.Should().Be(1);
     }
 }
 

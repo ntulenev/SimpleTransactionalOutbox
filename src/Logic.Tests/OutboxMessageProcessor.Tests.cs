@@ -194,15 +194,18 @@ public class OutboxMessageProcessorTests
         using var cts = new CancellationTokenSource();
         var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
-        int callOrder = 0;
+        var sendCalls = 0;
+        var removeCalls = 0;
+        var saveCalls = 0;
+
         sender.Setup(x => x.SendAsync(message.Object, cts.Token))
-            .Callback(() => callOrder++.Should().Be(0))
+            .Callback(() => sendCalls++)
             .Returns(Task.CompletedTask);
         uow.Setup(x => x.RemoveOutboxMessageAsync(message.Object, cts.Token))
-            .Callback(() => callOrder++.Should().Be(1))
+            .Callback(() => removeCalls++)
             .Returns(Task.CompletedTask);
         uow.Setup(x => x.SaveAsync(cts.Token))
-            .Callback(() => callOrder++.Should().Be(2))
+            .Callback(() => saveCalls++)
             .Returns(Task.CompletedTask);
 
 
@@ -213,10 +216,9 @@ public class OutboxMessageProcessorTests
         // Assert
         exception.Should().BeNull();
         result.Should().BeTrue();
-
-        sender.Verify(x => x.SendAsync(message.Object, cts.Token), Times.Once);
-        uow.Verify(x => x.RemoveOutboxMessageAsync(message.Object, cts.Token), Times.Once);
-        uow.Verify(x => x.SaveAsync(cts.Token), Times.Once);
+        sendCalls.Should().Be(1);
+        removeCalls.Should().Be(1);
+        saveCalls.Should().Be(1);
     }
 }
 

@@ -163,8 +163,19 @@ public class KafkaOutboxSenderTests
         var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
         var jsonStr = "test";
-        serializer.Setup(x => x.Serialize(message.Object)).Returns(jsonStr);
+        var serializeCalls = 0;
+        var produceCalls = 0;
+        string? producedPayload = null;
+
+        serializer.Setup(x => x.Serialize(message.Object))
+            .Callback(() => serializeCalls++)
+            .Returns(jsonStr);
         producer.Setup(x => x.ProduceAsync(topicName, It.IsAny<Message<Null, string>>(), token.Token))
+            .Callback<string, Message<Null, string>, CancellationToken>((_, producedMessage, _) =>
+            {
+                produceCalls++;
+                producedPayload = producedMessage.Value;
+            })
             .ReturnsAsync(new DeliveryResult<Null, string>());
 
 
@@ -173,8 +184,9 @@ public class KafkaOutboxSenderTests
 
         // Assert
         exception.Should().BeNull();
-        serializer.Verify(x => x.Serialize(message.Object), Times.Once);
-        producer.Verify(x => x.ProduceAsync(topicName, It.Is<Message<Null, string>>(x => x.Value == jsonStr), token.Token), Times.Once);
+        serializeCalls.Should().Be(1);
+        produceCalls.Should().Be(1);
+        producedPayload.Should().Be(jsonStr);
     }
 
     [Fact(DisplayName = "KafkaOutboxSender rethrows produce exception from Kafka producer.")]
