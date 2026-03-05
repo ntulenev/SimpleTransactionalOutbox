@@ -24,7 +24,7 @@ public class OutboxProcessor : IOutboxProcessor
     }
 
     /// <inheritdoc/>
-    public async Task ProcessAsync(CancellationToken cancellationToken = default)
+    public async Task ProcessAsync(CancellationToken cancellationToken)
     {
         while (true)
         {

@@ -9,5 +9,5 @@ public interface IOutboxProcessor
     /// Runs outbox processing loop until cancellation.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task ProcessAsync(CancellationToken cancellationToken = default);
+    Task ProcessAsync(CancellationToken cancellationToken);
 }
