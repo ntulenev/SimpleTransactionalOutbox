@@ -41,4 +41,21 @@ public class JsonDeserializerTests
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
+
+    [Fact(DisplayName = "JsonDeserializer cant Deserialize whitespaces.")]
+    [Trait("Category", "Unit")]
+    public void CantDeserializeWhitespaces()
+    {
+
+        // Arrange
+        var deserializer = new JsonDeserializer<TestClass>();
+        var testString = "   ";
+
+        // Act
+        TestClass result = null!;
+        var exception = Record.Exception(() => result = deserializer.Deserialize(testString));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+    }
 }
