@@ -44,6 +44,7 @@ public class Startup(IConfiguration configuration)
 
         services.AddScoped<IOutbox, Outbox>();
         services.AddScoped<IOutboxFetcher, OutboxFetcher>();
+        services.AddSingleton<IOutboxProcessor, OutboxProcessor>();
         services.AddSingleton<IOutboxBackoffDelayProvider>(provider =>
         {
             var options = provider.GetRequiredService<IOptions<OutboxHostedServiceOptions>>().Value;
