@@ -170,7 +170,10 @@ public class KafkaOutboxSenderTests
         serializer.Setup(x => x.Serialize(message.Object))
             .Callback(() => serializeCalls++)
             .Returns(jsonStr);
-        producer.Setup(x => x.ProduceAsync(topicName, It.IsAny<Message<Null, string>>(), token.Token))
+        producer.Setup(x => x.ProduceAsync(
+                topicName,
+                It.Is<Message<Null, string>>(messageToSend => messageToSend.Value == jsonStr),
+                It.Is<CancellationToken>(cancellationToken => cancellationToken == token.Token)))
             .Callback<string, Message<Null, string>, CancellationToken>((_, producedMessage, _) =>
             {
                 produceCalls++;
@@ -204,8 +207,12 @@ public class KafkaOutboxSenderTests
         using var token = new CancellationTokenSource();
         var message = new Mock<IOutboxMessage>(MockBehavior.Strict);
 
-        serializer.Setup(x => x.Serialize(message.Object)).Returns("test");
-        producer.Setup(x => x.ProduceAsync(topicName, It.IsAny<Message<Null, string>>(), token.Token))
+        var serializedMessage = "test";
+        serializer.Setup(x => x.Serialize(message.Object)).Returns(serializedMessage);
+        producer.Setup(x => x.ProduceAsync(
+                topicName,
+                It.Is<Message<Null, string>>(messageToSend => messageToSend.Value == serializedMessage),
+                It.Is<CancellationToken>(cancellationToken => cancellationToken == token.Token)))
             .ThrowsAsync(new ProduceException<Null, string>(new Error(ErrorCode.Local_Transport), null));
 
         // Act

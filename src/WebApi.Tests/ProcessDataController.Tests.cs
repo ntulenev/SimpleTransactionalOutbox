@@ -110,7 +110,7 @@ public class ProcessDataControllerTests
             }
         };
 
-        var decodedBody = "{\"id\":5,\"value\":7}";
+        var decodedBody = /*lang=json,strict*/ "{\"id\":5,\"value\":7}";
         var item = new ProcessingData(5, 7);
         var deserializeCalls = 0;
         var processDataCalls = 0;
@@ -152,7 +152,9 @@ public class ProcessDataControllerTests
         };
 
         var processDataCalls = 0;
-        service.Setup(x => x.ProcessDataAsync(It.IsAny<ProcessingData>(), It.IsAny<CancellationToken>()))
+        service.Setup(x => x.ProcessDataAsync(
+                It.IsAny<ProcessingData>(),
+                It.Is<CancellationToken>(token => token == cts.Token)))
             .Callback(() => processDataCalls++)
             .Returns(Task.CompletedTask);
 

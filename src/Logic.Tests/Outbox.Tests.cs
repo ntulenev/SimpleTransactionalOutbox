@@ -163,7 +163,10 @@ public class OutboxTests
         scope.SetupGet(x => x.ServiceProvider).Returns(provider.Object);
         scope.Setup(x => x.Dispose());
         provider.Setup(x => x.GetService(typeof(IOutboxMessageProcessor))).Returns(processor.Object);
-        processor.Setup(x => x.TryProcessAsync(It.IsAny<IOutboxMessage>(), tokenSource.Token)).ReturnsAsync(true);
+        processor.Setup(x => x.TryProcessAsync(
+                It.IsAny<IOutboxMessage>(),
+                It.Is<CancellationToken>(token => token == tokenSource.Token)))
+            .ReturnsAsync(true);
 
         // Act
         var result = await outBox.RunProcessingAsync(tokenSource.Token);

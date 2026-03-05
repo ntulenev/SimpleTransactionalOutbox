@@ -35,7 +35,7 @@ public class OutboxHostedServiceTests
         using var cts = new CancellationTokenSource();
         var processCalls = 0;
 
-        processor.Setup(x => x.ProcessAsync(cts.Token))
+        processor.Setup(x => x.ProcessAsync(It.Is<CancellationToken>(token => token.CanBeCanceled)))
             .Callback(() => processCalls++)
             .Returns(Task.CompletedTask);
 
