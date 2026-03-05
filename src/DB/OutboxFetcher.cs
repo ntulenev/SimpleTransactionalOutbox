@@ -21,7 +21,7 @@ public class OutboxFetcher : IOutboxFetcher
     }
 
     /// <inheritdoc/>
-    public async Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken)
     {
         return await _context.OutboxMessages
                              .OrderBy(x => x.OccurredOn)

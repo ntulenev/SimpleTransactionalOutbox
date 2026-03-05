@@ -12,5 +12,5 @@ public interface IOutboxFetcher
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Collection of actual outbox messages</returns>
-    Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<IOutboxMessage>> ReadOutboxMessagesAsync(CancellationToken cancellationToken);
 }

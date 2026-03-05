@@ -9,5 +9,5 @@ public interface IUnitOfWork
     /// Commits operation results to the storage.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task SaveAsync(CancellationToken cancellationToken = default);
+    Task SaveAsync(CancellationToken cancellationToken);
 }

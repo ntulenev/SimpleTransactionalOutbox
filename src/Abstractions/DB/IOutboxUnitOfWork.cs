@@ -12,5 +12,5 @@ public interface IOutboxUnitOfWork : IUnitOfWork
     /// </summary>
     /// <param name="message">Outbox message.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task RemoveOutboxMessageAsync(IOutboxMessage message, CancellationToken cancellationToken = default);
+    Task RemoveOutboxMessageAsync(IOutboxMessage message, CancellationToken cancellationToken);
 }

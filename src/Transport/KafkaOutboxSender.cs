@@ -43,7 +43,7 @@ public class KafkaOutboxSender : IOutboxSender
     }
 
     /// <inheritdoc/>
-    public async Task SendAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
+    public async Task SendAsync(IOutboxMessage message, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(message);
 

@@ -81,7 +81,7 @@ public abstract class UnitOfWork<TContext> :
     }
 
     /// <inheritdoc/>
-    public async Task SaveAsync(CancellationToken cancellationToken = default)
+    public async Task SaveAsync(CancellationToken cancellationToken)
     {
         ThrowIfDisposed();
 

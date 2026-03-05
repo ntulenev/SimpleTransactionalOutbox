@@ -29,7 +29,7 @@ public class OutboxMessageProcessor : IOutboxMessageProcessor
     }
 
     /// <inheritdoc/>
-    public async Task<bool> TryProcessAsync(IOutboxMessage message, CancellationToken cancellationToken = default)
+    public async Task<bool> TryProcessAsync(IOutboxMessage message, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(message);
 

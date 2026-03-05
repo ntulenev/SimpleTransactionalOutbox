@@ -12,5 +12,5 @@ public interface IProcessingDataUnitOfWork : IUnitOfWork
     /// </summary>
     /// <param name="data">Processing data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default);
+    Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken);
 }

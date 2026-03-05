@@ -12,5 +12,5 @@ public interface IDataProcessor
     /// </summary>
     /// <param name="data">Processing data item to be added to the system.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken = default);
+    Task ProcessDataAsync(IProcessingData data, CancellationToken cancellationToken);
 }
